@@ -7,6 +7,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.modules.auth.schemas import AuthResult, OtpRequest, OtpVerify, RefreshRequest, TokenPair
 from app.modules.auth.service import AuthService
@@ -14,10 +15,15 @@ from app.modules.auth.service import AuthService
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/otp/request", status_code=status.HTTP_202_ACCEPTED)
+@router.post(
+    "/otp/request",
+    status_code=status.HTTP_202_ACCEPTED,
+    responses={202: {"description": "OTP dispatched (SMS in production, use 123456 in dev)"}},
+)
 def request_otp(body: OtpRequest, db: Annotated[Session, Depends(get_db)]) -> dict[str, str]:
     AuthService(db).request_otp(body.phone)
-    return {"status": "sent"}
+    mode = "sms" if settings.app_env == "production" else "dev"
+    return {"status": "sent", "mode": mode}
 
 
 @router.post("/otp/verify", response_model=AuthResult)
