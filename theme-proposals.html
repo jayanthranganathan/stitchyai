@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stitchy AI — Theme Proposals</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0A0A0A;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    text-align: center;
+    padding: 56px 24px 40px;
+    background: linear-gradient(180deg, #111 0%, #0A0A0A 100%);
+  }
+  header h1 { font-family: 'Playfair Display', serif; font-size: 36px; letter-spacing: -0.5px; font-weight: 600; color: #fff; }
+  header p { font-size: 15px; color: #888; margin-top: 8px; }
+
+  .themes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    padding: 20px 32px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .theme-section { display: flex; flex-direction: column; gap: 32px; }
+  .theme-header { display: flex; align-items: flex-start; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid #222; }
+  .theme-number { font-size: 13px; font-weight: 700; letter-spacing: 2px; color: #555; }
+  .theme-name { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: #fff; }
+  .theme-vibe { font-size: 14px; color: #666; margin-top: 4px; }
+  .palette { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); }
+  .swatch-label { font-size: 11px; color: #555; margin-top: 4px; text-align: center; }
+  .swatch-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+  .screens-row { display: flex; gap: 24px; overflow-x: auto; padding-bottom: 8px; }
+
+  /* Phone frame */
+  .phone {
+    flex-shrink: 0;
+    width: 240px;
+    background: #1A1A1A;
+    border-radius: 36px;
+    padding: 14px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 14px; left: 50%; transform: translateX(-50%);
+    width: 64px; height: 5px;
+    background: #000;
+    border-radius: 4px;
+    z-index: 10;
+  }
+  .screen {
+    border-radius: 24px;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 9/19;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .screen-label {
+    font-size: 11px;
+    color: #555;
+    text-align: center;
+    margin-top: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+
+  /* ═══════════════════════════════════════════════
+     THEME 1: ROYALE KANJIVARAM
+     Midnight navy + 24k gold + aged ivory
+     Luxury, heritage, Indian royalty
+  ═══════════════════════════════════════════════ */
+
+  .t1 { background: #12103A; }
+
+  .t1-landing {
+    background: linear-gradient(175deg, #12103A 0%, #1E1850 60%, #12103A 100%);
+    display: flex; flex-direction: column;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .t1-landing::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse 200px 200px at 80% 20%, rgba(212,175,55,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 150px 150px at 20% 80%, rgba(212,175,55,0.08) 0%, transparent 70%);
+  }
+  .t1-topbar { padding: 32px 18px 0; display: flex; justify-content: center; position: relative; z-index: 1; }
+  .t1-logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 500; letter-spacing: 4px; color: #D4AF37; text-transform: uppercase; }
+  .t1-hero { padding: 24px 18px 0; position: relative; z-index: 1; }
+  .t1-ornament { text-align: center; font-size: 32px; margin-bottom: 8px; }
+  .t1-headline { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: #F5ECD7; line-height: 1.25; text-align: center; }
+  .t1-sub { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: #9A8B6A; text-align: center; margin-top: 6px; line-height: 1.6; }
+  .t1-divider { width: 40px; height: 1px; background: linear-gradient(90deg, transparent, #D4AF37, transparent); margin: 16px auto; }
+  .t1-btns { padding: 0 18px; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .t1-btn-primary {
+    background: linear-gradient(135deg, #D4AF37 0%, #B8941F 100%);
+    color: #12103A; font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+    text-align: center; padding: 13px; border-radius: 4px; text-transform: uppercase;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .t1-btn-outline {
+    border: 1px solid rgba(212,175,55,0.4); color: #D4AF37;
+    font-size: 12px; font-weight: 500; letter-spacing: 1px; text-align: center;
+    padding: 11px; border-radius: 4px; text-transform: uppercase;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .t1-ghost { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: #6A5F45; text-align: center; margin-top: 6px; text-decoration: underline; }
+
+  .t1-home { background: #0E0C2F; flex: 1; overflow: hidden; }
+  .t1-home-header {
+    background: linear-gradient(135deg, #1E1850 0%, #2D2668 100%);
+    padding: 28px 16px 16px;
+    border-bottom: 1px solid rgba(212,175,55,0.2);
+  }
+  .t1-home-greeting { font-family: 'Cormorant Garamond', serif; font-size: 11px; color: #9A8B6A; letter-spacing: 2px; text-transform: uppercase; }
+  .t1-home-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #F5ECD7; font-weight: 600; }
+  .t1-gold-bar { width: 100%; height: 2px; background: linear-gradient(90deg, #D4AF37, transparent); margin-top: 4px; }
+  .t1-home-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .t1-card {
+    background: linear-gradient(135deg, #1E1850 0%, #252060 100%);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 6px;
+    padding: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .t1-card::after {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, rgba(212,175,55,0.1), transparent 70%);
+  }
+  .t1-card-label { font-size: 9px; letter-spacing: 2px; color: #D4AF37; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+  .t1-card-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: #F5ECD7; font-weight: 600; }
+  .t1-card-sub { font-size: 10px; color: #6A5F45; margin-top: 2px; }
+  .t1-card-btn { margin-top: 10px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #D4AF37; font-weight: 600; }
+  .t1-home-nav {
+    background: #12103A; border-top: 1px solid rgba(212,175,55,0.15);
+    padding: 10px 0 6px; display: flex; justify-content: space-around;
+  }
+  .t1-nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .t1-nav-icon { font-size: 16px; }
+  .t1-nav-label { font-size: 9px; color: #6A5F45; letter-spacing: 0.5px; }
+  .t1-nav-label.active { color: #D4AF37; }
+
+  .t1-order { background: #0E0C2F; flex: 1; overflow: hidden; }
+  .t1-order-header { background: #1E1850; padding: 24px 16px 14px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+  .t1-order-back { font-size: 10px; color: #9A8B6A; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .t1-order-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #F5ECD7; font-weight: 600; }
+  .t1-order-sub { font-size: 10px; color: #6A5F45; margin-top: 2px; }
+  .t1-order-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .t1-status-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3);
+    border-radius: 3px; padding: 5px 10px; align-self: flex-start;
+  }
+  .t1-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #D4AF37; }
+  .t1-status-text { font-size: 10px; letter-spacing: 1px; color: #D4AF37; text-transform: uppercase; font-weight: 600; }
+  .t1-progress-track { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; position: relative; }
+  .t1-progress-fill { height: 3px; background: linear-gradient(90deg, #D4AF37, #F0CB6A); border-radius: 2px; width: 60%; position: relative; }
+  .t1-progress-fill::after { content: ''; position: absolute; right: -3px; top: -3px; width: 9px; height: 9px; background: #D4AF37; border-radius: 50%; border: 2px solid #0E0C2F; }
+  .t1-timeline { display: flex; flex-direction: column; gap: 0; }
+  .t1-tl-item { display: flex; gap: 10px; align-items: flex-start; }
+  .t1-tl-line { display: flex; flex-direction: column; align-items: center; }
+  .t1-tl-dot { width: 8px; height: 8px; border-radius: 50%; border: 2px solid #D4AF37; background: #D4AF37; flex-shrink: 0; margin-top: 3px; }
+  .t1-tl-dot.done { background: transparent; border-color: rgba(212,175,55,0.3); }
+  .t1-tl-connector { width: 1px; height: 18px; background: rgba(212,175,55,0.2); }
+  .t1-tl-text { font-size: 11px; color: #F5ECD7; font-family: 'Cormorant Garamond', serif; }
+  .t1-tl-time { font-size: 9px; color: #6A5F45; }
+
+
+  /* ═══════════════════════════════════════════════
+     THEME 2: NEON BAZAAR
+     Pure black + electric gradient + bold sans
+     Gen-Z, loud, maximalist dark mode
+  ═══════════════════════════════════════════════ */
+
+  .t2-landing {
+    background: #080808;
+    display: flex; flex-direction: column;
+    padding: 0; overflow: hidden; position: relative;
+  }
+  .t2-bg-glow {
+    position: absolute; top: -60px; left: -60px; right: -60px;
+    height: 300px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.5) 0%, rgba(236,72,153,0.3) 40%, transparent 70%);
+  }
+  .t2-topbar { padding: 30px 18px 0; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+  .t2-logo {
+    font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700;
+    background: linear-gradient(90deg, #7C3AED, #EC4899, #F59E0B);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .t2-badge { background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4); border-radius: 20px; padding: 3px 10px; font-size: 9px; color: #A78BFA; font-weight: 600; letter-spacing: 1px; }
+  .t2-hero { padding: 20px 18px 0; position: relative; z-index: 1; }
+  .t2-tag { font-size: 10px; letter-spacing: 2px; color: #6D28D9; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+  .t2-headline { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; line-height: 1.1; color: #fff; letter-spacing: -1px; }
+  .t2-headline span { background: linear-gradient(90deg, #7C3AED, #EC4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .t2-sub { font-size: 12px; color: #555; margin-top: 8px; line-height: 1.5; }
+  .t2-btns { padding: 16px 18px 0; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; }
+  .t2-btn-primary {
+    background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+    color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0.5px;
+    text-align: center; padding: 14px; border-radius: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    box-shadow: 0 8px 24px rgba(124,58,237,0.4);
+  }
+  .t2-btn-outline {
+    border: 1px solid #333; color: #888;
+    font-size: 12px; font-weight: 500; text-align: center;
+    padding: 12px; border-radius: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .t2-ghost { font-size: 11px; color: #444; text-align: center; margin-top: 8px; text-decoration: underline; }
+  .t2-floating { display: flex; gap: 8px; padding: 12px 18px 0; position: relative; z-index: 1; }
+  .t2-pill { background: #111; border: 1px solid #222; border-radius: 20px; padding: 6px 12px; font-size: 10px; color: #555; font-weight: 500; }
+
+  .t2-home { background: #080808; flex: 1; overflow: hidden; }
+  .t2-home-header { padding: 24px 16px 14px; }
+  .t2-greeting { font-size: 11px; color: #444; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+  .t2-home-name { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+  .t2-home-body { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  .t2-card-grad {
+    background: linear-gradient(135deg, #7C3AED, #EC4899);
+    border-radius: 16px; padding: 16px; position: relative; overflow: hidden;
+  }
+  .t2-card-grad::before {
+    content: ''; position: absolute; right: -20px; top: -20px;
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.1); border-radius: 50%;
+  }
+  .t2-card-dark { background: #111; border: 1px solid #1E1E1E; border-radius: 16px; padding: 14px; }
+  .t2-card-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: #fff; }
+  .t2-card-sub { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .t2-card-sub-dark { font-size: 10px; color: #444; margin-top: 2px; }
+  .t2-card-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+  .t2-arrow { width: 28px; height: 28px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .t2-arrow-dark { width: 28px; height: 28px; background: #1E1E1E; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .t2-home-nav { background: #0D0D0D; border-top: 1px solid #1A1A1A; padding: 10px 0 6px; display: flex; justify-content: space-around; }
+  .t2-nav-dot { width: 4px; height: 4px; border-radius: 50%; background: linear-gradient(135deg, #7C3AED, #EC4899); margin: 2px auto 0; }
+  .t2-status-row { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 8px; }
+  .t2-stat { background: #111; border: 1px solid #1E1E1E; border-radius: 12px; padding: 10px; flex: 1; text-align: center; }
+  .t2-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #fff; }
+  .t2-stat-label { font-size: 9px; color: #444; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .t2-orders { background: #080808; flex: 1; overflow: hidden; }
+  .t2-orders-header { padding: 24px 16px 14px; display: flex; align-items: center; justify-content: space-between; }
+  .t2-orders-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+  .t2-filter-pill { background: linear-gradient(135deg, #7C3AED, #EC4899); border-radius: 8px; padding: 5px 12px; font-size: 10px; color: #fff; font-weight: 600; }
+  .t2-orders-body { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  .t2-order-card { background: #111; border: 1px solid #1E1E1E; border-radius: 14px; padding: 14px; position: relative; overflow: hidden; }
+  .t2-order-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, #7C3AED, #EC4899); }
+  .t2-order-id { font-size: 9px; color: #444; letter-spacing: 1px; text-transform: uppercase; }
+  .t2-order-name { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #fff; margin-top: 2px; }
+  .t2-order-progress { height: 3px; background: #1E1E1E; border-radius: 2px; margin-top: 10px; }
+  .t2-order-progress-fill { height: 3px; background: linear-gradient(90deg, #7C3AED, #EC4899); border-radius: 2px; }
+  .t2-order-row { display: flex; justify-content: space-between; margin-top: 6px; }
+  .t2-order-status { font-size: 9px; color: #EC4899; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .t2-order-amount { font-size: 11px; color: #fff; font-weight: 600; }
+
+
+  /* ═══════════════════════════════════════════════
+     THEME 3: SAFFRON HARVEST
+     Warm saffron/turmeric + deep espresso + ivory
+     Bold, festive, South Indian craft vibes
+  ═══════════════════════════════════════════════ */
+
+  .t3-landing {
+    background: #FFF8EE;
+    display: flex; flex-direction: column;
+    padding: 0; overflow: hidden; position: relative;
+  }
+  .t3-top-band {
+    background: #E65C00;
+    height: 180px; position: relative;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    padding-bottom: 20px;
+    clip-path: ellipse(140% 100% at 50% 0%);
+  }
+  .t3-logo-mark { font-size: 28px; }
+  .t3-logo-text { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.5px; margin-top: 4px; }
+  .t3-body { padding: 24px 18px 0; flex: 1; }
+  .t3-headline { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; color: #1A1108; line-height: 1.2; }
+  .t3-headline span { color: #E65C00; }
+  .t3-sub { font-size: 12px; color: #8A7060; margin-top: 8px; line-height: 1.6; }
+  .t3-btns { padding: 0 18px; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .t3-btn-primary {
+    background: #E65C00; color: #fff; font-size: 14px; font-weight: 700;
+    text-align: center; padding: 14px; border-radius: 14px;
+    font-family: 'Sora', sans-serif; letter-spacing: 0.3px;
+    box-shadow: 0 6px 20px rgba(230,92,0,0.35);
+  }
+  .t3-btn-secondary {
+    background: #FFF0E0; color: #E65C00; font-size: 13px; font-weight: 600;
+    text-align: center; padding: 13px; border-radius: 14px;
+    font-family: 'Sora', sans-serif; border: 1.5px solid #F5C89A;
+  }
+  .t3-ghost { font-size: 12px; color: #B0957A; text-align: center; margin-top: 6px; text-decoration: underline; }
+  .t3-trust { display: flex; justify-content: center; gap: 16px; padding: 12px 18px 0; }
+  .t3-trust-item { font-size: 10px; color: #B0957A; display: flex; align-items: center; gap: 4px; }
+
+  .t3-home { background: #FFF8EE; flex: 1; overflow: hidden; }
+  .t3-home-header { background: #E65C00; padding: 28px 16px 18px; }
+  .t3-greeting-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .t3-greeting { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; }
+  .t3-home-name { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; color: #fff; }
+  .t3-avatar { width: 34px; height: 34px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .t3-home-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .t3-card {
+    background: #fff; border-radius: 16px; padding: 14px;
+    box-shadow: 0 2px 12px rgba(230,92,0,0.08);
+    display: flex; gap: 12px; align-items: center;
+  }
+  .t3-card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .t3-card-icon-orange { background: #FFF0E0; }
+  .t3-card-icon-brown { background: #F5E6D3; }
+  .t3-card-icon-red { background: #FFE8E8; }
+  .t3-card-title { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: #1A1108; }
+  .t3-card-sub { font-size: 10px; color: #B0957A; margin-top: 2px; }
+  .t3-card-right { margin-left: auto; font-size: 16px; color: #C0A080; }
+  .t3-home-nav { background: #fff; border-top: 1px solid #F0E0D0; padding: 10px 0 6px; display: flex; justify-content: space-around; }
+  .t3-nav-active { width: 24px; height: 3px; background: #E65C00; border-radius: 2px; margin: 3px auto 0; }
+
+  .t3-categories { background: #FFF8EE; flex: 1; overflow: hidden; }
+  .t3-cat-header { padding: 24px 16px 16px; }
+  .t3-cat-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: #1A1108; }
+  .t3-cat-sub { font-size: 11px; color: #B0957A; margin-top: 2px; }
+  .t3-cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px; }
+  .t3-cat-card {
+    background: #fff; border-radius: 14px; padding: 14px;
+    box-shadow: 0 2px 8px rgba(230,92,0,0.08);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .t3-cat-emoji { font-size: 28px; }
+  .t3-cat-name { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #1A1108; text-align: center; }
+  .t3-cat-price { font-size: 10px; color: #E65C00; font-weight: 600; }
+
+
+  /* ═══════════════════════════════════════════════
+     THEME 4: SAGE & TERRA
+     Earthy sage green + terracotta + warm off-white
+     Calm, artisanal, sustainable craft feel
+  ═══════════════════════════════════════════════ */
+
+  .t4-landing {
+    background: #F5F0E8;
+    display: flex; flex-direction: column;
+    padding: 0; overflow: hidden; position: relative;
+  }
+  .t4-topbar { padding: 28px 18px 0; display: flex; justify-content: space-between; align-items: center; }
+  .t4-logo { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; color: #2F4A3C; letter-spacing: 0.5px; }
+  .t4-logo-mark { font-size: 16px; }
+  .t4-hero-img {
+    margin: 16px 18px 0;
+    height: 120px;
+    background: linear-gradient(135deg, #C17D5C 0%, #8B4A3A 100%);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .t4-hero-img::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  }
+  .t4-hero-text { position: absolute; bottom: 14px; left: 16px; }
+  .t4-hero-label { font-size: 10px; color: rgba(255,255,255,0.7); letter-spacing: 1px; text-transform: uppercase; }
+  .t4-hero-title { font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; color: #fff; line-height: 1.2; }
+  .t4-body { padding: 16px 18px 0; }
+  .t4-headline { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; color: #1F2D1F; line-height: 1.3; }
+  .t4-headline em { font-style: normal; color: #C17D5C; }
+  .t4-sub { font-size: 12px; color: #7A8F7A; margin-top: 6px; line-height: 1.6; }
+  .t4-btns { padding: 0 18px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+  .t4-btn-primary {
+    background: #2F4A3C; color: #F5F0E8; font-size: 14px; font-weight: 600;
+    text-align: center; padding: 14px; border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+  }
+  .t4-btn-secondary {
+    background: transparent; color: #2F4A3C; font-size: 13px; font-weight: 500;
+    text-align: center; padding: 13px; border-radius: 50px;
+    border: 1.5px solid #C0CEB8; font-family: 'Poppins', sans-serif;
+  }
+  .t4-ghost { font-size: 12px; color: #A0A898; text-align: center; margin-top: 4px; }
+
+  .t4-home { background: #F5F0E8; flex: 1; overflow: hidden; }
+  .t4-home-header { padding: 28px 16px 16px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .t4-greeting { font-size: 12px; color: #7A8F7A; }
+  .t4-home-name { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 700; color: #1F2D1F; }
+  .t4-notif { width: 32px; height: 32px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .t4-home-body { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  .t4-banner {
+    background: #2F4A3C;
+    border-radius: 18px; padding: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .t4-banner::after {
+    content: '🌿';
+    position: absolute; right: 50px; top: 50%; transform: translateY(-50%);
+    font-size: 48px; opacity: 0.15;
+  }
+  .t4-banner-title { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 700; color: #fff; max-width: 120px; }
+  .t4-banner-sub { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .t4-banner-btn { background: #C17D5C; color: #fff; font-size: 10px; font-weight: 600; padding: 7px 12px; border-radius: 20px; white-space: nowrap; }
+  .t4-section-title { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; color: #1F2D1F; margin-bottom: -4px; }
+  .t4-services { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .t4-service {
+    background: #fff; border-radius: 14px; padding: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .t4-service-icon { font-size: 22px; margin-bottom: 6px; }
+  .t4-service-name { font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 600; color: #1F2D1F; }
+  .t4-service-price { font-size: 10px; color: #C17D5C; font-weight: 600; margin-top: 2px; }
+  .t4-home-nav { background: #fff; border-top: 1px solid #E8E0D5; padding: 10px 0 6px; display: flex; justify-content: space-around; border-radius: 0 0 24px 24px; }
+
+  .t4-profile { background: #F5F0E8; flex: 1; overflow: hidden; }
+  .t4-profile-header { background: #2F4A3C; padding: 28px 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .t4-profile-avatar { width: 50px; height: 50px; background: #C17D5C; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 700; color: #fff; }
+  .t4-profile-name { font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; color: #fff; }
+  .t4-profile-sub { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .t4-profile-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .t4-menu-item { background: #fff; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .t4-menu-icon { font-size: 16px; width: 24px; text-align: center; }
+  .t4-menu-text { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: #1F2D1F; flex: 1; }
+  .t4-menu-arrow { font-size: 14px; color: #C0CEB8; }
+
+
+  /* ═══════════════════════════════════════════════
+     THEME 5: BLUSH COUTURE
+     Deep rose + champagne gold + soft white
+     Premium, feminine, high-fashion boutique
+  ═══════════════════════════════════════════════ */
+
+  .t5-landing {
+    background: #FDF6F3;
+    display: flex; flex-direction: column;
+    padding: 0; overflow: hidden; position: relative;
+  }
+  .t5-topbar { padding: 28px 20px 0; display: flex; justify-content: center; }
+  .t5-logo { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: #8B2B3E; letter-spacing: 2px; text-transform: uppercase; }
+  .t5-hero { padding: 16px 20px 0; }
+  .t5-hero-card {
+    background: linear-gradient(145deg, #8B2B3E 0%, #A83A51 50%, #6B1F30 100%);
+    border-radius: 24px; padding: 22px 18px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 12px 32px rgba(139,43,62,0.3);
+  }
+  .t5-hero-card::before {
+    content: '';
+    position: absolute; right: -30px; top: -30px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.05); border-radius: 50%;
+  }
+  .t5-hero-card::after {
+    content: '✂';
+    position: absolute; right: 16px; bottom: 16px;
+    font-size: 48px; opacity: 0.15; color: #fff;
+  }
+  .t5-hero-tag { font-size: 9px; letter-spacing: 2.5px; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-bottom: 10px; }
+  .t5-hero-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #fff; line-height: 1.2; }
+  .t5-hero-title em { font-style: italic; color: #F5C4A1; }
+  .t5-hero-cta { margin-top: 14px; background: #fff; color: #8B2B3E; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 9px 16px; border-radius: 20px; display: inline-block; }
+  .t5-body { padding: 16px 20px 0; }
+  .t5-sub { font-family: 'Playfair Display', serif; font-size: 13px; color: #B07080; text-align: center; font-style: italic; }
+  .t5-btns { padding: 12px 20px 0; display: flex; flex-direction: column; gap: 10px; }
+  .t5-btn-primary {
+    background: #8B2B3E; color: #fff; font-size: 13px; font-weight: 600;
+    text-align: center; padding: 14px; border-radius: 14px;
+    font-family: 'DM Sans', sans-serif; letter-spacing: 0.5px;
+  }
+  .t5-btn-outline {
+    border: 1.5px solid #E8C4C4; color: #8B2B3E; font-size: 13px; font-weight: 500;
+    text-align: center; padding: 13px; border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .t5-ghost { font-family: 'Playfair Display', serif; font-size: 12px; color: #C09090; text-align: center; margin-top: 6px; font-style: italic; }
+
+  .t5-home { background: #FDF6F3; flex: 1; overflow: hidden; }
+  .t5-home-header { padding: 26px 16px 14px; }
+  .t5-greeting { font-family: 'Playfair Display', serif; font-size: 11px; color: #C09090; font-style: italic; }
+  .t5-home-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #2A0A12; }
+  .t5-home-body { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  .t5-feature-row { display: flex; gap: 8px; }
+  .t5-feat-card {
+    flex: 1; background: #8B2B3E; border-radius: 16px; padding: 14px;
+    position: relative; overflow: hidden;
+  }
+  .t5-feat-card::after { content: ''; position: absolute; right: -10px; bottom: -10px; width: 50px; height: 50px; background: rgba(255,255,255,0.07); border-radius: 50%; }
+  .t5-feat-icon { font-size: 20px; margin-bottom: 6px; }
+  .t5-feat-title { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 600; color: #fff; }
+  .t5-feat-sub { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .t5-feat-card-light {
+    flex: 1; background: #fff; border-radius: 16px; padding: 14px;
+    border: 1px solid #F0D8D8;
+  }
+  .t5-feat-title-dark { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 600; color: #2A0A12; }
+  .t5-feat-sub-dark { font-size: 10px; color: #C09090; margin-top: 2px; }
+  .t5-order-list { display: flex; flex-direction: column; gap: 8px; }
+  .t5-order-item { background: #fff; border-radius: 14px; padding: 12px; border-left: 3px solid #8B2B3E; box-shadow: 0 2px 8px rgba(139,43,62,0.06); }
+  .t5-order-name { font-family: 'Playfair Display', serif; font-size: 13px; color: #2A0A12; font-weight: 600; }
+  .t5-order-meta { display: flex; justify-content: space-between; margin-top: 4px; }
+  .t5-order-status { font-size: 10px; color: #8B2B3E; font-weight: 600; }
+  .t5-order-date { font-size: 10px; color: #C09090; }
+  .t5-home-nav { background: #fff; border-top: 1px solid #F0E0E0; padding: 10px 0 6px; display: flex; justify-content: space-around; }
+
+  .t5-catalog { background: #FDF6F3; flex: 1; overflow: hidden; }
+  .t5-cat-header { padding: 24px 16px 12px; }
+  .t5-cat-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #2A0A12; }
+  .t5-cat-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: 12px; color: #C09090; margin-top: 2px; }
+  .t5-cat-list { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+  .t5-cat-item {
+    background: #fff; border-radius: 16px; padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 2px 8px rgba(139,43,62,0.06);
+  }
+  .t5-cat-swatch { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .t5-cat-name { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: #2A0A12; }
+  .t5-cat-count { font-size: 11px; color: #C09090; margin-top: 2px; }
+  .t5-cat-price { margin-left: auto; font-size: 12px; color: #8B2B3E; font-weight: 700; }
+
+
+  /* Legend */
+  .theme-meta { display: flex; gap: 16px; align-items: flex-start; flex: 1; }
+  .theme-info { flex: 1; }
+  .theme-fonts { font-size: 12px; color: #555; margin-top: 6px; }
+  .theme-fonts span { background: #1A1A1A; border-radius: 4px; padding: 2px 8px; margin-right: 6px; font-family: monospace; font-size: 11px; color: #888; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Stitchy AI — Theme Proposals</h1>
+  <p>5 distinct visual directions · Choose one to build</p>
+</header>
+
+<div class="themes-grid">
+
+  <!-- ═══ THEME 1: ROYALE KANJIVARAM ═══ -->
+  <div class="theme-section">
+    <div class="theme-header">
+      <div class="theme-meta">
+        <div class="theme-info">
+          <div class="theme-number">THEME 01</div>
+          <div class="theme-name">Royale Kanjivaram</div>
+          <div class="theme-vibe">Luxury · Heritage · Midnight navy & 24k gold · Inspired by Kanchipuram silk</div>
+          <div class="palette">
+            <div class="swatch-wrap"><div class="swatch" style="background:#12103A"></div><div class="swatch-label">#12103A</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#D4AF37"></div><div class="swatch-label">#D4AF37</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#F5ECD7"></div><div class="swatch-label">#F5ECD7</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#1E1850"></div><div class="swatch-label">#1E1850</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#9A8B6A"></div><div class="swatch-label">#9A8B6A</div></div>
+          </div>
+          <div class="theme-fonts">Fonts: <span>Cormorant Garamond</span><span>DM Sans</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="screens-row">
+      <!-- Landing -->
+      <div>
+        <div class="phone">
+          <div class="screen t1-landing">
+            <div class="t1-topbar"><div class="t1-logo">✦ THUGIL</div></div>
+            <div class="t1-hero">
+              <div class="t1-ornament">🪡</div>
+              <div class="t1-headline">Crafted for you,<br>stitched with care</div>
+              <div class="t1-sub">Bespoke tailoring from<br>master artisans</div>
+              <div class="t1-divider"></div>
+            </div>
+            <div class="t1-btns">
+              <div class="t1-btn-primary">Continue with Phone</div>
+              <div class="t1-btn-outline">Continue with Email</div>
+              <div class="t1-ghost">Explore without signing up</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Landing</div>
+      </div>
+      <!-- Home -->
+      <div>
+        <div class="phone">
+          <div class="screen t1 t1-home">
+            <div class="t1-home-header">
+              <div class="t1-home-greeting">WELCOME BACK</div>
+              <div class="t1-home-name">Priya Sharma</div>
+              <div class="t1-gold-bar"></div>
+            </div>
+            <div class="t1-home-body">
+              <div class="t1-card">
+                <div class="t1-card-label">NEW ORDER</div>
+                <div class="t1-card-title">Start stitching journey</div>
+                <div class="t1-card-sub">Browse blouses, kurtis & more</div>
+                <div class="t1-card-btn">EXPLORE CATEGORIES →</div>
+              </div>
+              <div class="t1-card">
+                <div class="t1-card-label">ACTIVE</div>
+                <div class="t1-card-title">Deep V-Neck Blouse</div>
+                <div class="t1-card-sub">Stitching in progress · 60%</div>
+                <div style="margin-top:8px;">
+                  <div class="t1-progress-track"><div class="t1-progress-fill" style="width:60%"></div></div>
+                </div>
+                <div class="t1-card-btn">TRACK ORDER →</div>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <div class="t1-home-nav">
+              <div class="t1-nav-item"><div class="t1-nav-icon">⚜</div><div class="t1-nav-label active">Home</div></div>
+              <div class="t1-nav-item"><div class="t1-nav-icon">📦</div><div class="t1-nav-label">Orders</div></div>
+              <div class="t1-nav-item"><div class="t1-nav-icon">👤</div><div class="t1-nav-label">Profile</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Customer Home</div>
+      </div>
+      <!-- Order Track -->
+      <div>
+        <div class="phone">
+          <div class="screen t1 t1-order">
+            <div class="t1-order-header">
+              <div class="t1-order-back">← BACK</div>
+              <div class="t1-order-title">Deep V-Neck Blouse</div>
+              <div class="t1-order-sub">Order #ORD-2024</div>
+            </div>
+            <div class="t1-order-body">
+              <div class="t1-status-badge">
+                <div class="t1-status-dot"></div>
+                <div class="t1-status-text">In Progress</div>
+              </div>
+              <div class="t1-card">
+                <div class="t1-card-label">PROGRESS</div>
+                <div class="t1-progress-track"><div class="t1-progress-fill"></div></div>
+                <div style="display:flex;justify-content:space-between;margin-top:8px;">
+                  <div style="font-size:10px;color:#6A5F45">Placed</div>
+                  <div style="font-size:10px;color:#6A5F45">Stitching</div>
+                  <div style="font-size:10px;color:#6A5F45">Delivered</div>
+                </div>
+              </div>
+              <div class="t1-card">
+                <div class="t1-card-label">TIMELINE</div>
+                <div class="t1-timeline">
+                  <div class="t1-tl-item">
+                    <div class="t1-tl-line"><div class="t1-tl-dot"></div><div class="t1-tl-connector"></div></div>
+                    <div style="margin-left:8px"><div class="t1-tl-text">Order placed</div><div class="t1-tl-time">May 8, 2:30 PM</div></div>
+                  </div>
+                  <div class="t1-tl-item">
+                    <div class="t1-tl-line"><div class="t1-tl-dot"></div><div class="t1-tl-connector"></div></div>
+                    <div style="margin-left:8px"><div class="t1-tl-text">Tailor assigned</div><div class="t1-tl-time">May 9, 10:00 AM</div></div>
+                  </div>
+                  <div class="t1-tl-item">
+                    <div class="t1-tl-line"><div class="t1-tl-dot done"></div></div>
+                    <div style="margin-left:8px"><div class="t1-tl-text" style="color:#6A5F45">Delivery</div><div class="t1-tl-time">Est. May 15</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Order Tracking</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ THEME 2: NEON BAZAAR ═══ -->
+  <div class="theme-section">
+    <div class="theme-header">
+      <div class="theme-meta">
+        <div class="theme-info">
+          <div class="theme-number">THEME 02</div>
+          <div class="theme-name">Neon Bazaar</div>
+          <div class="theme-vibe">Bold dark mode · Electric gradient · Gen-Z energy · Pure black + violet + hot pink</div>
+          <div class="palette">
+            <div class="swatch-wrap"><div class="swatch" style="background:#080808"></div><div class="swatch-label">#080808</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#7C3AED"></div><div class="swatch-label">#7C3AED</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#EC4899"></div><div class="swatch-label">#EC4899</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#111111"></div><div class="swatch-label">#111111</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#A78BFA"></div><div class="swatch-label">#A78BFA</div></div>
+          </div>
+          <div class="theme-fonts">Fonts: <span>Space Grotesk</span><span>DM Sans</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="screens-row">
+      <!-- Landing -->
+      <div>
+        <div class="phone">
+          <div class="screen t2-landing">
+            <div class="t2-bg-glow"></div>
+            <div class="t2-topbar">
+              <div class="t2-logo">Thugil✦</div>
+              <div class="t2-badge">BETA</div>
+            </div>
+            <div class="t2-hero">
+              <div class="t2-tag">✦ Tailored for you</div>
+              <div class="t2-headline">Your style,<br><span>stitched</span><br>to perfection</div>
+              <div class="t2-sub">Custom garments delivered fast. No guessing, no fitting rooms.</div>
+            </div>
+            <div class="t2-floating">
+              <div class="t2-pill">Blouse ✓</div>
+              <div class="t2-pill">Kurti ✓</div>
+              <div class="t2-pill">Shirt ✓</div>
+            </div>
+            <div class="t2-btns">
+              <div class="t2-btn-primary">Get started →</div>
+              <div class="t2-btn-outline">I already have an account</div>
+              <div class="t2-ghost">Browse without signing up</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Landing</div>
+      </div>
+      <!-- Home -->
+      <div>
+        <div class="phone">
+          <div class="screen t2-home">
+            <div class="t2-home-header">
+              <div class="t2-greeting">GOOD MORNING</div>
+              <div class="t2-home-name">Priya 👋</div>
+            </div>
+            <div class="t2-status-row">
+              <div class="t2-stat"><div class="t2-stat-num">3</div><div class="t2-stat-label">Orders</div></div>
+              <div class="t2-stat"><div class="t2-stat-num">1</div><div class="t2-stat-label">Active</div></div>
+              <div class="t2-stat"><div class="t2-stat-num">₹840</div><div class="t2-stat-label">Saved</div></div>
+            </div>
+            <div class="t2-home-body">
+              <div class="t2-card-grad">
+                <div class="t2-card-title">New order ✦</div>
+                <div class="t2-card-sub">Pick a design and get started</div>
+                <div class="t2-card-row">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.5)">Blouse · Kurti · Shirt</div>
+                  <div class="t2-arrow">→</div>
+                </div>
+              </div>
+              <div class="t2-card-dark">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                  <div>
+                    <div class="t2-card-title">Deep V-Neck</div>
+                    <div class="t2-card-sub-dark">Stitching · ETA May 15</div>
+                  </div>
+                  <div class="t2-arrow-dark">→</div>
+                </div>
+                <div class="t2-order-progress" style="margin-top:10px">
+                  <div class="t2-order-progress-fill" style="width:60%"></div>
+                </div>
+                <div style="font-size:9px;color:#555;margin-top:4px">60% complete</div>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <div class="t2-home-nav">
+              <div class="t1-nav-item"><div style="font-size:16px">⚡</div><div style="font-size:9px;color:#7C3AED;font-weight:600">Home</div><div class="t2-nav-dot"></div></div>
+              <div class="t1-nav-item"><div style="font-size:16px;opacity:0.3">📦</div><div style="font-size:9px;color:#444">Orders</div></div>
+              <div class="t1-nav-item"><div style="font-size:16px;opacity:0.3">👤</div><div style="font-size:9px;color:#444">Profile</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Customer Home</div>
+      </div>
+      <!-- Orders -->
+      <div>
+        <div class="phone">
+          <div class="screen t2-orders">
+            <div class="t2-orders-header">
+              <div class="t2-orders-title">My orders</div>
+              <div class="t2-filter-pill">All</div>
+            </div>
+            <div class="t2-orders-body">
+              <div class="t2-order-card">
+                <div class="t2-order-id">ORD-1024 · Blouse</div>
+                <div class="t2-order-name">Deep V-Neck</div>
+                <div class="t2-order-progress"><div class="t2-order-progress-fill" style="width:60%"></div></div>
+                <div class="t2-order-row"><div class="t2-order-status">In Progress</div><div class="t2-order-amount">₹420</div></div>
+              </div>
+              <div class="t2-order-card">
+                <div class="t2-order-id">ORD-1018 · Kurti</div>
+                <div class="t2-order-name">Straight Cut</div>
+                <div class="t2-order-progress"><div class="t2-order-progress-fill" style="width:100%"></div></div>
+                <div class="t2-order-row"><div class="t2-order-status" style="color:#4ADE80">Delivered</div><div class="t2-order-amount">₹480</div></div>
+              </div>
+              <div class="t2-order-card">
+                <div class="t2-order-id">ORD-1030 · Shirt</div>
+                <div class="t2-order-name">Formal Oxford</div>
+                <div class="t2-order-progress"><div class="t2-order-progress-fill" style="width:5%"></div></div>
+                <div class="t2-order-row"><div class="t2-order-status" style="color:#F59E0B">Placed</div><div class="t2-order-amount">₹600</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">My Orders</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ THEME 3: SAFFRON HARVEST ═══ -->
+  <div class="theme-section">
+    <div class="theme-header">
+      <div class="theme-meta">
+        <div class="theme-info">
+          <div class="theme-number">THEME 03</div>
+          <div class="theme-name">Saffron Harvest</div>
+          <div class="theme-vibe">Bold & warm · Festive energy · Electric saffron + deep espresso + ivory · South Indian celebration</div>
+          <div class="palette">
+            <div class="swatch-wrap"><div class="swatch" style="background:#E65C00"></div><div class="swatch-label">#E65C00</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#1A1108"></div><div class="swatch-label">#1A1108</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#FFF8EE"></div><div class="swatch-label">#FFF8EE</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#F5C89A"></div><div class="swatch-label">#F5C89A</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#8A7060"></div><div class="swatch-label">#8A7060</div></div>
+          </div>
+          <div class="theme-fonts">Fonts: <span>Sora</span><span>DM Sans</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="screens-row">
+      <div>
+        <div class="phone">
+          <div class="screen t3-landing">
+            <div class="t3-top-band">
+              <div class="t3-logo-mark">🪡</div>
+              <div class="t3-logo-text">Thugil</div>
+            </div>
+            <div class="t3-body">
+              <div class="t3-headline">Your perfect <span>fit</span>,<br>made to order</div>
+              <div class="t3-sub">Chennai's finest tailors at your fingertips. Measured, stitched, delivered.</div>
+            </div>
+            <div class="t3-btns">
+              <div class="t3-btn-primary">Continue with Phone</div>
+              <div class="t3-btn-secondary">Continue with Email</div>
+              <div class="t3-ghost">Explore without account</div>
+            </div>
+            <div class="t3-trust">
+              <div class="t3-trust-item">✓ 500+ Tailors</div>
+              <div class="t3-trust-item">✓ 48hr delivery</div>
+              <div class="t3-trust-item">✓ Free remeasure</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Landing</div>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="screen t3-home">
+            <div class="t3-home-header">
+              <div class="t3-greeting-row">
+                <div>
+                  <div class="t3-greeting">Good morning,</div>
+                  <div class="t3-home-name">Priya Sharma</div>
+                </div>
+                <div class="t3-avatar">👤</div>
+              </div>
+            </div>
+            <div class="t3-home-body">
+              <div class="t3-card">
+                <div class="t3-card-icon t3-card-icon-orange">🧵</div>
+                <div>
+                  <div class="t3-card-title">Place new order</div>
+                  <div class="t3-card-sub">Browse designs & order</div>
+                </div>
+                <div class="t3-card-right">›</div>
+              </div>
+              <div class="t3-card">
+                <div class="t3-card-icon t3-card-icon-brown">📦</div>
+                <div>
+                  <div class="t3-card-title">Track orders</div>
+                  <div class="t3-card-sub">1 order in progress</div>
+                </div>
+                <div class="t3-card-right">›</div>
+              </div>
+              <div class="t3-card">
+                <div class="t3-card-icon t3-card-icon-red">👤</div>
+                <div>
+                  <div class="t3-card-title">My profile</div>
+                  <div class="t3-card-sub">Measurements & address</div>
+                </div>
+                <div class="t3-card-right">›</div>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <div class="t3-home-nav">
+              <div class="t1-nav-item"><div style="font-size:16px">🏠</div><div style="font-size:9px;color:#E65C00;font-weight:600">Home</div><div class="t3-nav-active"></div></div>
+              <div class="t1-nav-item"><div style="font-size:16px;opacity:0.4">📦</div><div style="font-size:9px;color:#B0957A">Orders</div></div>
+              <div class="t1-nav-item"><div style="font-size:16px;opacity:0.4">👤</div><div style="font-size:9px;color:#B0957A">Profile</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Customer Home</div>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="screen t3-categories">
+            <div class="t3-cat-header">
+              <div class="t3-cat-title">Categories</div>
+              <div class="t3-cat-sub">What would you like tailored?</div>
+            </div>
+            <div class="t3-cat-grid">
+              <div class="t3-cat-card">
+                <div class="t3-cat-emoji">👘</div>
+                <div class="t3-cat-name">Blouse</div>
+                <div class="t3-cat-price">from ₹350</div>
+              </div>
+              <div class="t3-cat-card">
+                <div class="t3-cat-emoji">👗</div>
+                <div class="t3-cat-name">Kurti</div>
+                <div class="t3-cat-price">from ₹480</div>
+              </div>
+              <div class="t3-cat-card">
+                <div class="t3-cat-emoji">👔</div>
+                <div class="t3-cat-name">Shirt</div>
+                <div class="t3-cat-price">from ₹520</div>
+              </div>
+              <div class="t3-cat-card">
+                <div class="t3-cat-emoji">👖</div>
+                <div class="t3-cat-name">Pants</div>
+                <div class="t3-cat-price">from ₹580</div>
+              </div>
+              <div class="t3-cat-card">
+                <div class="t3-cat-emoji">🥻</div>
+                <div class="t3-cat-name">Saree Blouse</div>
+                <div class="t3-cat-price">from ₹500</div>
+              </div>
+              <div class="t3-cat-card" style="background:linear-gradient(135deg,#FFF0E0,#FFE0C0);">
+                <div class="t3-cat-emoji">✨</div>
+                <div class="t3-cat-name">Custom</div>
+                <div class="t3-cat-price">from ₹800</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Categories</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ THEME 4: SAGE & TERRA ═══ -->
+  <div class="theme-section">
+    <div class="theme-header">
+      <div class="theme-meta">
+        <div class="theme-info">
+          <div class="theme-number">THEME 04</div>
+          <div class="theme-name">Sage & Terra</div>
+          <div class="theme-vibe">Calm · Artisanal · Deep forest green + terracotta + warm linen · Sustainable craft aesthetic</div>
+          <div class="palette">
+            <div class="swatch-wrap"><div class="swatch" style="background:#2F4A3C"></div><div class="swatch-label">#2F4A3C</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#C17D5C"></div><div class="swatch-label">#C17D5C</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#F5F0E8"></div><div class="swatch-label">#F5F0E8</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#7A8F7A"></div><div class="swatch-label">#7A8F7A</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#1F2D1F"></div><div class="swatch-label">#1F2D1F</div></div>
+          </div>
+          <div class="theme-fonts">Fonts: <span>Poppins</span><span>DM Sans</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="screens-row">
+      <div>
+        <div class="phone">
+          <div class="screen t4-landing">
+            <div class="t4-topbar">
+              <div class="t4-logo">🌿 Thugil</div>
+              <div style="font-size:10px;color:#A0A898">Sign in</div>
+            </div>
+            <div style="padding:12px 18px 0">
+              <div class="t4-hero-img">
+                🪡
+                <div class="t4-hero-text">
+                  <div class="t4-hero-label">HANDCRAFTED</div>
+                  <div class="t4-hero-title">Tailored to<br>perfection</div>
+                </div>
+              </div>
+            </div>
+            <div class="t4-body">
+              <div class="t4-headline">Wear what fits<br><em>you perfectly</em></div>
+              <div class="t4-sub">Skilled tailors, custom measurements, sustainable stitching — all at your doorstep.</div>
+            </div>
+            <div class="t4-btns">
+              <div class="t4-btn-primary">Continue with Phone</div>
+              <div class="t4-btn-secondary">Continue with Email</div>
+              <div class="t4-ghost">Explore as guest</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Landing</div>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="screen t4-home">
+            <div class="t4-home-header">
+              <div>
+                <div class="t4-greeting">Good morning</div>
+                <div class="t4-home-name">Priya Sharma</div>
+              </div>
+              <div class="t4-notif">🔔</div>
+            </div>
+            <div class="t4-home-body">
+              <div class="t4-banner">
+                <div>
+                  <div class="t4-banner-title">Start a new order today</div>
+                  <div class="t4-banner-sub">500+ designs available</div>
+                </div>
+                <div class="t4-banner-btn">Browse →</div>
+              </div>
+              <div class="t4-section-title">Services</div>
+              <div class="t4-services">
+                <div class="t4-service">
+                  <div class="t4-service-icon">👘</div>
+                  <div class="t4-service-name">Blouses</div>
+                  <div class="t4-service-price">from ₹350</div>
+                </div>
+                <div class="t4-service">
+                  <div class="t4-service-icon">👗</div>
+                  <div class="t4-service-name">Kurtis</div>
+                  <div class="t4-service-price">from ₹480</div>
+                </div>
+                <div class="t4-service">
+                  <div class="t4-service-icon">👔</div>
+                  <div class="t4-service-name">Shirts</div>
+                  <div class="t4-service-price">from ₹520</div>
+                </div>
+                <div class="t4-service">
+                  <div class="t4-service-icon">✨</div>
+                  <div class="t4-service-name">Custom</div>
+                  <div class="t4-service-price">from ₹800</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <div class="t4-home-nav">
+              <div class="t1-nav-item"><div style="font-size:16px">🏡</div><div style="font-size:9px;color:#2F4A3C;font-weight:600">Home</div></div>
+              <div class="t1-nav-item"><div style="font-size:16px;opacity:0.4">📦</div><div style="font-size:9px;color:#A0A898">Orders</div></div>
+              <div class="t1-nav-item"><div style="font-size:16px;opacity:0.4">👤</div><div style="font-size:9px;color:#A0A898">Profile</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Customer Home</div>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="screen t4-profile">
+            <div class="t4-profile-header">
+              <div class="t4-profile-avatar">P</div>
+              <div>
+                <div class="t4-profile-name">Priya Sharma</div>
+                <div class="t4-profile-sub">+91 90000 00001</div>
+              </div>
+            </div>
+            <div class="t4-profile-body">
+              <div class="t4-menu-item">
+                <div class="t4-menu-icon">📏</div>
+                <div class="t4-menu-text">My measurements</div>
+                <div class="t4-menu-arrow">›</div>
+              </div>
+              <div class="t4-menu-item">
+                <div class="t4-menu-icon">📍</div>
+                <div class="t4-menu-text">Saved addresses</div>
+                <div class="t4-menu-arrow">›</div>
+              </div>
+              <div class="t4-menu-item">
+                <div class="t4-menu-icon">🔔</div>
+                <div class="t4-menu-text">Notifications</div>
+                <div class="t4-menu-arrow">›</div>
+              </div>
+              <div class="t4-menu-item">
+                <div class="t4-menu-icon">❓</div>
+                <div class="t4-menu-text">Help & support</div>
+                <div class="t4-menu-arrow">›</div>
+              </div>
+              <div class="t4-menu-item" style="border:1.5px solid #E8D5C8">
+                <div class="t4-menu-icon">🚪</div>
+                <div class="t4-menu-text" style="color:#C17D5C">Sign out</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Profile</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ THEME 5: BLUSH COUTURE ═══ -->
+  <div class="theme-section">
+    <div class="theme-header">
+      <div class="theme-meta">
+        <div class="theme-info">
+          <div class="theme-number">THEME 05</div>
+          <div class="theme-name">Blush Couture</div>
+          <div class="theme-vibe">Premium feminine · High-fashion boutique · Deep rose + champagne + ivory · Playfair elegance</div>
+          <div class="palette">
+            <div class="swatch-wrap"><div class="swatch" style="background:#8B2B3E"></div><div class="swatch-label">#8B2B3E</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#FDF6F3"></div><div class="swatch-label">#FDF6F3</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#F5C4A1"></div><div class="swatch-label">#F5C4A1</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#E8C4C4"></div><div class="swatch-label">#E8C4C4</div></div>
+            <div class="swatch-wrap"><div class="swatch" style="background:#2A0A12"></div><div class="swatch-label">#2A0A12</div></div>
+          </div>
+          <div class="theme-fonts">Fonts: <span>Playfair Display</span><span>DM Sans</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="screens-row">
+      <div>
+        <div class="phone">
+          <div class="screen t5-landing">
+            <div class="t5-topbar"><div class="t5-logo">Thugil</div></div>
+            <div class="t5-hero">
+              <div class="t5-hero-card">
+                <div class="t5-hero-tag">✦ Chennai's finest tailors</div>
+                <div class="t5-hero-title">Garments that<br>tell your <em>story</em></div>
+                <div class="t5-hero-cta">Explore designs</div>
+              </div>
+            </div>
+            <div class="t5-body">
+              <div class="t5-sub">Handcrafted by expert artisans,<br>delivered to your door</div>
+            </div>
+            <div class="t5-btns">
+              <div class="t5-btn-primary">Continue with Phone</div>
+              <div class="t5-btn-outline">Continue with Email</div>
+              <div class="t5-ghost">Browse the collection</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Landing</div>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="screen t5-home">
+            <div class="t5-home-header">
+              <div class="t5-greeting">Welcome back,</div>
+              <div class="t5-home-name">Priya Sharma</div>
+            </div>
+            <div class="t5-home-body">
+              <div class="t5-feature-row">
+                <div class="t5-feat-card">
+                  <div class="t5-feat-icon">🧵</div>
+                  <div class="t5-feat-title">New order</div>
+                  <div class="t5-feat-sub">Browse designs →</div>
+                </div>
+                <div class="t5-feat-card-light">
+                  <div class="t5-feat-icon">📦</div>
+                  <div class="t5-feat-title-dark">My orders</div>
+                  <div class="t5-feat-sub-dark">1 active →</div>
+                </div>
+              </div>
+              <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;color:#2A0A12;margin-bottom:4px">Recent orders</div>
+              <div class="t5-order-list">
+                <div class="t5-order-item">
+                  <div class="t5-order-name">Deep V-Neck Blouse</div>
+                  <div class="t5-order-meta">
+                    <div class="t5-order-status">In Progress · 60%</div>
+                    <div class="t5-order-date">ETA May 15</div>
+                  </div>
+                </div>
+                <div class="t5-order-item" style="border-left-color:#C09090">
+                  <div class="t5-order-name">Straight Cut Kurti</div>
+                  <div class="t5-order-meta">
+                    <div class="t5-order-status" style="color:#2F7A4F">Delivered</div>
+                    <div class="t5-order-date">May 2</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <div class="t5-home-nav">
+              <div class="t1-nav-item"><div style="font-size:16px">🏠</div><div style="font-size:9px;color:#8B2B3E;font-weight:600;font-family:'Playfair Display',serif">Home</div></div>
+              <div class="t1-nav-item"><div style="font-size:16px;opacity:0.4">📦</div><div style="font-size:9px;color:#C09090">Orders</div></div>
+              <div class="t1-nav-item"><div style="font-size:16px;opacity:0.4">👤</div><div style="font-size:9px;color:#C09090">Profile</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Customer Home</div>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="screen t5-catalog">
+            <div class="t5-cat-header">
+              <div class="t5-cat-title">Collections</div>
+              <div class="t5-cat-sub">Choose your garment</div>
+            </div>
+            <div class="t5-cat-list">
+              <div class="t5-cat-item">
+                <div class="t5-cat-swatch" style="background:#FFF0E8">👘</div>
+                <div><div class="t5-cat-name">Blouse</div><div class="t5-cat-count">4 designs</div></div>
+                <div class="t5-cat-price">₹350+</div>
+              </div>
+              <div class="t5-cat-item">
+                <div class="t5-cat-swatch" style="background:#F0F0FF">👗</div>
+                <div><div class="t5-cat-name">Kurti</div><div class="t5-cat-count">3 designs</div></div>
+                <div class="t5-cat-price">₹480+</div>
+              </div>
+              <div class="t5-cat-item">
+                <div class="t5-cat-swatch" style="background:#F0F8F0">👔</div>
+                <div><div class="t5-cat-name">Shirt</div><div class="t5-cat-count">2 designs</div></div>
+                <div class="t5-cat-price">₹520+</div>
+              </div>
+              <div class="t5-cat-item">
+                <div class="t5-cat-swatch" style="background:#F8F0FF">🥻</div>
+                <div><div class="t5-cat-name">Saree Blouse</div><div class="t5-cat-count">1 design</div></div>
+                <div class="t5-cat-price">₹500+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Catalog</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer style="text-align:center;padding:40px;color:#333;font-size:12px;border-top:1px solid #111">
+  Stitchy AI · Theme Proposals · Reply with a theme number (01–05) to build it
+</footer>
+
+</body>
+</html>

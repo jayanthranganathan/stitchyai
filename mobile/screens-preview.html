@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stitchy AI – Screen Previews</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f0ece6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 32px 24px; }
+  h1 { text-align: center; font-size: 22px; color: #1F1B16; margin-bottom: 8px; }
+  p.subtitle { text-align: center; font-size: 14px; color: #6B6157; margin-bottom: 32px; }
+
+  .grid { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; }
+
+  /* phone shell */
+  .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .phone-label { font-size: 13px; font-weight: 600; color: #1F1B16; letter-spacing: .4px; }
+  .phone {
+    width: 320px; height: 640px;
+    border: 3px solid #1F1B16;
+    border-radius: 40px;
+    overflow: hidden;
+    background: #FFFDF8;
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+    display: flex; flex-direction: column;
+  }
+  .notch {
+    height: 30px; background: #1F1B16;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .notch-dot { width: 10px; height: 10px; border-radius: 50%; background: #333; }
+  .screen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+  /* design tokens */
+  :root {
+    --primary: #7B2D26;
+    --accent:  #C99A4B;
+    --bg:      #FFFDF8;
+    --surface: #FFFFFF;
+    --text:    #1F1B16;
+    --muted:   #6B6157;
+    --border:  #E7E0D5;
+    --danger:  #B3261E;
+    --success: #1F7A4D;
+  }
+
+  /* shared layout */
+  .sc { padding: 20px 20px 0; flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
+
+  /* typography */
+  .h1  { font-size: 22px; font-weight: 700; color: var(--text); }
+  .h2  { font-size: 18px; font-weight: 600; color: var(--text); }
+  .body{ font-size: 15px; color: var(--muted); }
+  .cap { font-size: 12px; color: var(--muted); }
+  .xs  { height: 4px; }
+  .sm  { height: 8px; }
+  .md  { height: 16px; }
+  .lg  { height: 24px; }
+  .xl  { height: 32px; }
+
+  /* buttons */
+  .btn { display: flex; align-items: center; justify-content: center; border-radius: 10px; padding: 14px 20px; font-size: 15px; font-weight: 600; border: none; cursor: pointer; width: 100%; }
+  .btn-primary  { background: var(--primary); color: #fff; }
+  .btn-secondary{ background: var(--accent);  color: #fff; }
+  .btn-ghost    { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+  /* input */
+  .input-wrap { margin-bottom: 14px; }
+  .input-label{ font-size: 12px; color: var(--text); margin-bottom: 4px; }
+  .input-box  { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 15px; color: var(--text); background: var(--surface); width: 100%; }
+  .input-err  { border-color: var(--danger); }
+  .err-text   { font-size: 12px; color: var(--danger); margin-top: 4px; }
+
+  /* card */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+
+  /* divider row */
+  .div-row { display: flex; align-items: center; margin: 14px 0; }
+  .div-line { flex: 1; height: 1px; background: var(--border); }
+  .div-txt  { font-size: 12px; color: var(--muted); margin: 0 10px; }
+
+  /* link text */
+  .link { font-size: 15px; color: var(--primary); text-align: center; margin-top: 16px; }
+
+  /* badge */
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .badge-pending  { background: #FFF3CD; color: #856404; }
+  .badge-progress { background: #D1ECF1; color: #0C5460; }
+  .badge-done     { background: #D4EDDA; color: #155724; }
+
+  /* list row */
+  .list-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .list-row:last-child { border-bottom: none; }
+
+  /* nav bar */
+  .nav-bar { background: var(--surface); border-top: 1px solid var(--border); display: flex; padding: 8px 0 4px; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; color: var(--muted); }
+  .nav-item.active { color: var(--primary); }
+  .nav-icon { font-size: 20px; }
+
+  /* header bar (native stack) */
+  .header-bar { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; height: 44px; }
+  .header-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .header-back  { font-size: 13px; color: var(--primary); }
+  .header-home  { display: flex; align-items: center; gap: 3px; font-size: 13px; color: var(--primary); font-weight: 600; }
+
+  /* dev banner */
+  .dev-banner { background: #FFF8C5; border: 1px solid #E6C700; border-radius: 10px; padding: 10px 14px; margin: 12px 0 0; text-align: center; font-size: 12px; color: #7A5C00; font-weight: 600; }
+
+  /* hero area for landing */
+  .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .brand-big { font-size: 36px; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+  .tagline   { font-size: 14px; color: var(--muted); text-align: center; }
+
+  /* otp boxes */
+  .otp-row { display: flex; gap: 10px; margin-bottom: 16px; }
+  .otp-box { flex: 1; border: 1px solid var(--border); border-radius: 10px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: var(--text); background: var(--surface); }
+  .otp-filled { border-color: var(--primary); }
+
+  /* role chips */
+  .role-chip { border: 1px solid var(--border); border-radius: 999px; padding: 10px 18px; margin-bottom: 10px; text-align: center; font-size: 14px; font-weight: 600; color: var(--text); background: var(--surface); }
+  .role-chip.selected { border-color: var(--primary); background: #FAF0EE; color: var(--primary); }
+
+  /* category grid */
+  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .cat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .cat-icon { font-size: 28px; }
+  .cat-name { font-size: 12px; font-weight: 600; color: var(--text); }
+
+  /* map placeholder */
+  .map-ph { background: #d8e8d0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #3a6b3a; margin-bottom: 14px; }
+
+  /* section title */
+  .sec { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: .6px; text-transform: uppercase; margin-bottom: 10px; }
+
+  /* admin stat */
+  .stat-row { display: flex; gap: 10px; margin-bottom: 14px; }
+  .stat-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
+  .stat-num  { font-size: 22px; font-weight: 700; color: var(--primary); }
+  .stat-lbl  { font-size: 11px; color: var(--muted); }
+
+  /* scrollable inner (faux) */
+  .inner { flex: 1; overflow: hidden; }
+</style>
+</head>
+<body>
+
+<h1>✂ Stitchy AI — Screen Previews</h1>
+<p class="subtitle">All key screens across the customer, tailor, delivery & admin flows</p>
+
+<div class="grid">
+
+  <!-- ==================== AUTH ==================== -->
+
+  <!-- 1. Landing -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="hero">
+            <div class="brand-big">✂ Thugil</div>
+            <div class="tagline">Custom tailoring, delivered to your door.</div>
+          </div>
+          <div style="padding-bottom:24px;">
+            <button class="btn btn-primary">Continue with Phone</button>
+            <div class="sm"></div>
+            <button class="btn btn-secondary">Continue with Email</button>
+            <div class="div-row"><div class="div-line"></div><span class="div-txt">or</span><div class="div-line"></div></div>
+            <button class="btn btn-ghost">Explore without signing up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">1. Landing</div>
+  </div>
+
+  <!-- 2. Phone Login -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Sign in with Phone</div>
+          <div class="sm"></div>
+          <div class="body" style="margin-bottom:24px;">We'll send a one-time password to verify your number.</div>
+          <div class="input-wrap">
+            <div class="input-label">Phone number</div>
+            <div class="input-box" style="color:var(--muted);">+91 98765 43210</div>
+          </div>
+          <button class="btn btn-primary">Send OTP</button>
+          <div class="link">Use email instead</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">2. Phone Login</div>
+  </div>
+
+  <!-- 3. Email Login -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Sign in with Email</div>
+          <div class="sm"></div>
+          <div class="body" style="margin-bottom:24px;">We'll send you a link to sign in.</div>
+          <div class="input-wrap">
+            <div class="input-label">Email address</div>
+            <div class="input-box" style="color:var(--muted);">you@example.com</div>
+          </div>
+          <button class="btn btn-primary">Continue</button>
+          <div class="link">Use phone number instead</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">3. Email Login</div>
+  </div>
+
+  <!-- 4. OTP Verify -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Enter OTP</div>
+          <div class="sm"></div>
+          <div class="body" style="margin-bottom:24px;">We sent a 6-digit code to +91 98765 43210</div>
+          <div class="otp-row">
+            <div class="otp-box otp-filled">1</div>
+            <div class="otp-box otp-filled">2</div>
+            <div class="otp-box otp-filled">3</div>
+            <div class="otp-box otp-filled">4</div>
+            <div class="otp-box otp-filled">5</div>
+            <div class="otp-box otp-filled">6</div>
+          </div>
+          <button class="btn btn-primary">Verify and sign in</button>
+          <div class="dev-banner">🛠 Dev mode — tap to fill OTP: 123456</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">4. OTP Verify</div>
+  </div>
+
+  <!-- 5. Role Select -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">How will you use Thugil?</div>
+          <div class="sm"></div>
+          <div class="body" style="margin-bottom:20px;">Choose your role to get started. You can add more roles later.</div>
+
+          <div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;">
+            <span style="font-size:28px;">👤</span>
+            <div style="flex:1;">
+              <div class="h2" style="font-size:15px;">Customer</div>
+              <div class="cap">Browse designs, place orders and track deliveries.</div>
+            </div>
+            <span style="font-size:22px;color:var(--muted);">›</span>
+          </div>
+          <div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;">
+            <span style="font-size:28px;">🧵</span>
+            <div style="flex:1;">
+              <div class="h2" style="font-size:15px;">Tailor</div>
+              <div class="cap">Accept orders, stitch garments and grow your business.</div>
+            </div>
+            <span style="font-size:22px;color:var(--muted);">›</span>
+          </div>
+          <div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;">
+            <span style="font-size:28px;">🛵</span>
+            <div style="flex:1;">
+              <div class="h2" style="font-size:15px;">Delivery Partner</div>
+              <div class="cap">Pick up and deliver orders in your city.</div>
+            </div>
+            <span style="font-size:22px;color:var(--muted);">›</span>
+          </div>
+
+          <div style="background:#FFF8ED;border-radius:10px;padding:12px;border:1px solid #F0DDB0;margin-top:4px;">
+            <div class="cap" style="text-align:center;">🔒 Administrator accounts are created by the platform team only.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">5. Role Select</div>
+  </div>
+
+  <!-- 5a. Customer Register -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Complete your profile</div>
+          <div class="sm"></div>
+          <div class="body" style="margin-bottom:24px;">Just a few details to personalise your experience.</div>
+          <div class="input-wrap">
+            <div class="input-label">Full name</div>
+            <div class="input-box">Priya Sharma</div>
+          </div>
+          <div class="input-wrap">
+            <div class="input-label">City (optional)</div>
+            <div class="input-box" style="color:var(--muted);">e.g. Chennai</div>
+          </div>
+          <button class="btn btn-primary">Start exploring</button>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">5a. Customer Register</div>
+  </div>
+
+  <!-- 5b. Tailor Register -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc" style="overflow:hidden;">
+          <div class="xl"></div>
+          <div class="h1">Become a Tailor</div>
+          <div class="sm"></div>
+          <div class="body" style="margin-bottom:16px;font-size:13px;">Tell us about your skills. An admin will review before you can accept orders.</div>
+          <div class="input-wrap" style="margin-bottom:8px;">
+            <div class="input-label">Full name</div>
+            <div class="input-box" style="padding:8px 12px;font-size:13px;">Ravi Kumar</div>
+          </div>
+          <div class="input-wrap" style="margin-bottom:8px;">
+            <div class="input-label">City</div>
+            <div class="input-box" style="padding:8px 12px;font-size:13px;">Chennai</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Areas of expertise</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+            <span style="border:1px solid var(--primary);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--primary);background:#FAF0EE;">Blouse</span>
+            <span style="border:1px solid var(--border);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--text);">Kurti</span>
+            <span style="border:1px solid var(--primary);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--primary);background:#FAF0EE;">Shirt</span>
+            <span style="border:1px solid var(--border);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--text);">Pants</span>
+            <span style="border:1px solid var(--border);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--text);">Custom</span>
+          </div>
+          <div style="background:#F0F4FF;border-radius:10px;padding:10px;border:1px solid #C8D4F0;margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:700;color:#2A4A8C;margin-bottom:4px;">📄 Documents required</div>
+            <div style="font-size:11px;color:#2A4A8C;">Aadhaar / PAN upload after account review.</div>
+          </div>
+          <button class="btn btn-primary" style="padding:12px;">Submit application</button>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">5b. Tailor Register</div>
+  </div>
+
+  <!-- 5b-success. Tailor Submitted -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc" style="justify-content:space-between;">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;">
+            <div style="font-size:56px;margin-bottom:16px;">🎉</div>
+            <div class="h1" style="margin-bottom:12px;">Application submitted!</div>
+            <div class="body" style="line-height:24px;">Our team will review your profile. You'll be notified once approved — usually within 24 hours.</div>
+          </div>
+          <div style="padding-bottom:24px;">
+            <button class="btn btn-primary">Continue to app</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">5b. Tailor Submitted ✓</div>
+  </div>
+
+  <!-- 5c. Delivery Register -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Become a Delivery Partner</div>
+          <div class="sm"></div>
+          <div class="body" style="margin-bottom:16px;font-size:13px;">Tell us about yourself. An admin will approve your account before you start pickups.</div>
+          <div class="input-wrap" style="margin-bottom:8px;">
+            <div class="input-label">Full name</div>
+            <div class="input-box" style="padding:8px 12px;font-size:13px;">Suresh Kumar</div>
+          </div>
+          <div class="input-wrap" style="margin-bottom:10px;">
+            <div class="input-label">City</div>
+            <div class="input-box" style="padding:8px 12px;font-size:13px;">Chennai</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Vehicle type</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <div style="border:1px solid var(--primary);border-radius:10px;padding:12px;text-align:center;background:#FAF0EE;font-size:14px;font-weight:600;">🏍 Bike</div>
+            <div style="border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;background:var(--surface);font-size:14px;font-weight:600;">🛵 Scooter</div>
+            <div style="border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;background:var(--surface);font-size:14px;font-weight:600;">🚲 Bicycle</div>
+            <div style="border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;background:var(--surface);font-size:14px;font-weight:600;">🚗 Car</div>
+          </div>
+          <div style="background:#F0F4FF;border-radius:10px;padding:10px;border:1px solid #C8D4F0;margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:700;color:#2A4A8C;margin-bottom:4px;">📄 Documents required</div>
+            <div style="font-size:11px;color:#2A4A8C;">Driving licence and Aadhaar upload after approval.</div>
+          </div>
+          <button class="btn btn-primary" style="padding:12px;">Submit application</button>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">5c. Delivery Register</div>
+  </div>
+
+  <!-- ==================== CUSTOMER ==================== -->
+
+  <!-- 6. Customer Home -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="header-bar">
+          <span class="header-title">Thugil Designers</span>
+        </div>
+        <div class="sc">
+          <div class="h1">Welcome back</div>
+          <div class="xs"></div>
+          <div class="body" style="margin-bottom:14px;">Custom tailoring, delivered to your door.</div>
+          <div class="card">
+            <div class="h2">Start a new order</div>
+            <div class="sm"></div>
+            <div class="body">Browse blouses, kurtis, shirts, pants, or propose a custom design.</div>
+            <div class="md"></div>
+            <button class="btn btn-primary">Explore categories</button>
+          </div>
+          <div class="card">
+            <div class="h2">Track an order</div>
+            <div class="sm"></div>
+            <div class="body">See progress and live delivery location.</div>
+            <div class="md"></div>
+            <button class="btn btn-secondary">My orders</button>
+          </div>
+          <div class="card">
+            <div class="h2">My profile</div>
+            <div class="sm"></div>
+            <div class="body">Manage your details and saved addresses.</div>
+            <div class="md"></div>
+            <button class="btn btn-ghost">View profile</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">6. Customer Home</div>
+  </div>
+
+  <!-- 7. Categories -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Categories</div>
+          <div class="sm"></div>
+          <div class="body" style="margin-bottom:16px;">What would you like tailored?</div>
+          <div class="cat-grid">
+            <div class="cat-card"><div class="cat-icon">👗</div><div class="cat-name">Blouse</div></div>
+            <div class="cat-card"><div class="cat-icon">👘</div><div class="cat-name">Kurti</div></div>
+            <div class="cat-card"><div class="cat-icon">👔</div><div class="cat-name">Shirt</div></div>
+            <div class="cat-card"><div class="cat-icon">👖</div><div class="cat-name">Pants</div></div>
+            <div class="cat-card"><div class="cat-icon">🥻</div><div class="cat-name">Saree Blouse</div></div>
+            <div class="cat-card"><div class="cat-icon">✨</div><div class="cat-name">Custom</div></div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">📦</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">7. Categories</div>
+  </div>
+
+  <!-- 8. Designs -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Blouse Designs</div>
+          <div class="sm"></div>
+          <div class="inner">
+            <div class="card" style="display:flex;gap:12px;align-items:center;">
+              <div style="width:64px;height:64px;border-radius:10px;background:#f5e6d8;display:flex;align-items:center;justify-content:center;font-size:28px;">👗</div>
+              <div>
+                <div class="h2" style="font-size:15px;">Classic Round Neck</div>
+                <div class="body" style="font-size:13px;">Starting ₹350</div>
+                <div class="sm"></div>
+                <button class="btn btn-primary" style="padding:6px 14px;font-size:13px;">Order</button>
+              </div>
+            </div>
+            <div class="card" style="display:flex;gap:12px;align-items:center;">
+              <div style="width:64px;height:64px;border-radius:10px;background:#e8f0e8;display:flex;align-items:center;justify-content:center;font-size:28px;">👗</div>
+              <div>
+                <div class="h2" style="font-size:15px;">Deep V-Neck</div>
+                <div class="body" style="font-size:13px;">Starting ₹420</div>
+                <div class="sm"></div>
+                <button class="btn btn-primary" style="padding:6px 14px;font-size:13px;">Order</button>
+              </div>
+            </div>
+            <div class="card" style="display:flex;gap:12px;align-items:center;">
+              <div style="width:64px;height:64px;border-radius:10px;background:#e8e0f0;display:flex;align-items:center;justify-content:center;font-size:28px;">👗</div>
+              <div>
+                <div class="h2" style="font-size:15px;">Boat Neck</div>
+                <div class="body" style="font-size:13px;">Starting ₹380</div>
+                <div class="sm"></div>
+                <button class="btn btn-primary" style="padding:6px 14px;font-size:13px;">Order</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">📦</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">8. Designs</div>
+  </div>
+
+  <!-- 9. Orders -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">My Orders</div>
+          <div class="lg"></div>
+          <div class="inner">
+            <div class="list-row">
+              <div>
+                <div class="h2" style="font-size:14px;">#ORD-1024 · Blouse</div>
+                <div class="cap">Placed 3 days ago</div>
+              </div>
+              <span class="badge badge-progress">In Progress</span>
+            </div>
+            <div class="list-row">
+              <div>
+                <div class="h2" style="font-size:14px;">#ORD-1018 · Kurti</div>
+                <div class="cap">Placed 10 days ago</div>
+              </div>
+              <span class="badge badge-done">Delivered</span>
+            </div>
+            <div class="list-row">
+              <div>
+                <div class="h2" style="font-size:14px;">#ORD-1012 · Pants</div>
+                <div class="cap">Placed 20 days ago</div>
+              </div>
+              <span class="badge badge-done">Delivered</span>
+            </div>
+            <div class="list-row">
+              <div>
+                <div class="h2" style="font-size:14px;">#ORD-1030 · Shirt</div>
+                <div class="cap">Placed today</div>
+              </div>
+              <span class="badge badge-pending">Pending</span>
+            </div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item active"><span class="nav-icon">📦</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">9. My Orders</div>
+  </div>
+
+  <!-- 10. Order Track -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">#ORD-1024</div>
+          <div class="xs"></div>
+          <div class="body" style="margin-bottom:16px;">Blouse · Classic Round Neck</div>
+          <!-- status steps -->
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:24px;height:24px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+              <div class="body" style="color:var(--success);font-size:13px;">Order confirmed</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:24px;height:24px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;">✓</div>
+              <div class="body" style="color:var(--success);font-size:13px;">Assigned to tailor</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:24px;height:24px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;">●</div>
+              <div class="body" style="font-size:13px;font-weight:600;">Stitching in progress</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:24px;height:24px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;">4</div>
+              <div class="body" style="font-size:13px;color:var(--muted);">Out for delivery</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:24px;height:24px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;">5</div>
+              <div class="body" style="font-size:13px;color:var(--muted);">Delivered</div>
+            </div>
+          </div>
+          <div class="map-ph" style="height:150px;">🗺 Live map</div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item active"><span class="nav-icon">📦</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">10. Order Tracking</div>
+  </div>
+
+  <!-- 11. Customer Profile -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="header-bar">
+          <span class="header-back">‹ Back</span>
+          <span class="header-title">Profile</span>
+          <span class="header-home">🏠 Home</span>
+        </div>
+        <div class="sc">
+          <div class="sm"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:20px;">
+            <div style="width:64px;height:64px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;margin-bottom:10px;">P</div>
+            <div class="h2">Priya Sharma</div>
+            <div class="body" style="font-size:13px;">+91 98765 43210</div>
+          </div>
+          <div class="card">
+            <div class="list-row" style="padding:8px 0;"><span class="body" style="font-size:14px;">📏 My measurements</span><span style="color:var(--muted);font-size:18px;">›</span></div>
+            <div class="list-row" style="padding:8px 0;border-bottom:none;"><span class="body" style="font-size:14px;">🔔 Notifications</span><span style="color:var(--muted);font-size:18px;">›</span></div>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:8px;">← Back to Home</button>
+          <button class="btn btn-ghost" style="margin-top:8px;">Sign out</button>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">11. Customer Profile</div>
+  </div>
+
+  <!-- ==================== TAILOR ==================== -->
+
+  <!-- 12. Tailor Dashboard -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Tailor Dashboard</div>
+          <div class="xs"></div>
+          <div class="body" style="margin-bottom:16px;">Welcome back, Ravi.</div>
+          <div class="stat-row">
+            <div class="stat-card"><div class="stat-num">4</div><div class="stat-lbl">Active</div></div>
+            <div class="stat-card"><div class="stat-num">18</div><div class="stat-lbl">This month</div></div>
+            <div class="stat-card"><div class="stat-num">₹8.4k</div><div class="stat-lbl">Earned</div></div>
+          </div>
+          <div class="card">
+            <div class="h2" style="margin-bottom:8px;">Available orders</div>
+            <div class="body" style="font-size:13px;">2 new orders match your skills</div>
+            <div class="md"></div>
+            <button class="btn btn-primary">Browse orders</button>
+          </div>
+          <div class="card">
+            <div class="h2" style="margin-bottom:8px;">My orders</div>
+            <div class="body" style="font-size:13px;">4 orders in progress</div>
+            <div class="md"></div>
+            <button class="btn btn-secondary">View all</button>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">📋</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">12. Tailor Dashboard</div>
+  </div>
+
+  <!-- 13. Available Orders -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Available Orders</div>
+          <div class="lg"></div>
+          <div class="inner">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <div class="h2" style="font-size:14px;">Blouse – Round Neck</div>
+                <span class="badge badge-pending">New</span>
+              </div>
+              <div class="body" style="font-size:13px;margin-bottom:10px;">Deadline: 3 days · ₹350</div>
+              <button class="btn btn-primary" style="padding:8px;">Accept Order</button>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <div class="h2" style="font-size:14px;">Kurti – Straight Cut</div>
+                <span class="badge badge-pending">New</span>
+              </div>
+              <div class="body" style="font-size:13px;margin-bottom:10px;">Deadline: 5 days · ₹480</div>
+              <button class="btn btn-primary" style="padding:8px;">Accept Order</button>
+            </div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item active"><span class="nav-icon">📋</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">13. Available Orders (Tailor)</div>
+  </div>
+
+  <!-- ==================== DELIVERY ==================== -->
+
+  <!-- 14. Delivery Dashboard -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Delivery Dashboard</div>
+          <div class="xs"></div>
+          <div class="body" style="margin-bottom:16px;">You are <strong style="color:var(--success);">Online</strong></div>
+          <div class="stat-row">
+            <div class="stat-card"><div class="stat-num">2</div><div class="stat-lbl">Active</div></div>
+            <div class="stat-card"><div class="stat-num">12</div><div class="stat-lbl">Today</div></div>
+            <div class="stat-card"><div class="stat-num">₹620</div><div class="stat-lbl">Earned</div></div>
+          </div>
+          <div class="map-ph" style="height:200px;">🗺 Live pickup map</div>
+          <button class="btn btn-primary">View active pickup</button>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">📋</span>Pickups</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">14. Delivery Dashboard</div>
+  </div>
+
+  <!-- ==================== ADMIN ==================== -->
+
+  <!-- 15. Admin Dashboard -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Admin Dashboard</div>
+          <div class="lg"></div>
+          <div class="stat-row">
+            <div class="stat-card"><div class="stat-num">142</div><div class="stat-lbl">Orders</div></div>
+            <div class="stat-card"><div class="stat-num">38</div><div class="stat-lbl">Tailors</div></div>
+            <div class="stat-card"><div class="stat-num">12</div><div class="stat-lbl">Riders</div></div>
+          </div>
+          <div class="card">
+            <div class="h2" style="margin-bottom:8px;">Pending approvals</div>
+            <div class="body" style="font-size:13px;">5 tailor registrations awaiting review</div>
+            <div class="md"></div>
+            <button class="btn btn-primary">Review now</button>
+          </div>
+          <div class="card">
+            <div class="h2" style="margin-bottom:8px;">Orders overview</div>
+            <div class="body" style="font-size:13px;">23 in progress · 8 delayed</div>
+            <div class="md"></div>
+            <button class="btn btn-secondary">View all</button>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item active"><span class="nav-icon">📊</span>Dashboard</div>
+          <div class="nav-item"><span class="nav-icon">✅</span>Approvals</div>
+          <div class="nav-item"><span class="nav-icon">📦</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">📈</span>Reports</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">15. Admin Dashboard</div>
+  </div>
+
+  <!-- 16. Admin Approvals -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"><div class="notch-dot"></div></div>
+      <div class="screen">
+        <div class="sc">
+          <div class="xl"></div>
+          <div class="h1">Approvals</div>
+          <div class="lg"></div>
+          <div class="inner">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <div class="h2" style="font-size:14px;">Meena Tailors</div>
+                <span class="badge badge-pending">Tailor</span>
+              </div>
+              <div class="body" style="font-size:12px;margin-bottom:10px;">Blouses, Kurtis · 5 yrs exp</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary" style="padding:8px;font-size:13px;flex:1;">Approve</button>
+                <button class="btn btn-ghost" style="padding:8px;font-size:13px;flex:1;">Reject</button>
+              </div>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <div class="h2" style="font-size:14px;">Suresh Kumar</div>
+                <span class="badge badge-pending">Rider</span>
+              </div>
+              <div class="body" style="font-size:12px;margin-bottom:10px;">2-wheeler · Chennai zone</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary" style="padding:8px;font-size:13px;flex:1;">Approve</button>
+                <button class="btn btn-ghost" style="padding:8px;font-size:13px;flex:1;">Reject</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item"><span class="nav-icon">📊</span>Dashboard</div>
+          <div class="nav-item active"><span class="nav-icon">✅</span>Approvals</div>
+          <div class="nav-item"><span class="nav-icon">📦</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">📈</span>Reports</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">16. Admin Approvals</div>
+  </div>
+
+</div>
+
+<p style="text-align:center;margin-top:40px;font-size:12px;color:#aaa;">Stitchy AI · Screen design reference · v0.1</p>
+</body>
+</html>

@@ -1,0 +1,89 @@
+version: "3.9"
+
+# ── Local GPU Server — docker-compose ────────────────────────────────────────
+#
+# Use this when running the AI worker on your own GPU machine at home/office.
+#
+# Prerequisites:
+#   1. Ubuntu 22.04 + NVIDIA driver 535+ installed
+#   2. Docker + nvidia-container-toolkit installed
+#   3. Copy ai_service/.env.example → ai_service/.env and fill in values
+#
+# First run (downloads ~40 GB of models — takes 20-60 minutes):
+#   docker compose -f docker-compose.local.yml up
+#
+# Subsequent runs (models already cached):
+#   docker compose -f docker-compose.local.yml up -d
+#
+# View logs:
+#   docker compose -f docker-compose.local.yml logs -f ai-worker
+#
+# Stop:
+#   docker compose -f docker-compose.local.yml down
+
+services:
+
+  # ── AI inference worker (uses your local GPU) ─────────────────────────────
+  ai-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: stitchy-ai-worker:local
+    runtime: nvidia                        # Uses your local NVIDIA GPU via Docker
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    env_file:
+      - .env
+    command: bash /app/scripts/local_start.sh
+    volumes:
+      # Model cache — stored on your SSD, survives container restarts
+      - /opt/stitchy/models:/workspace/models
+      # Celery logs
+      - /var/log/stitchy:/var/log/celery
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "celery", "-A", "ai_service.workers.celery_app", "inspect", "ping"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 300s   # 5 min — model loading takes time on first warm-up
+
+  # ── Redis (task queue broker) ─────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"          # Expose so your IONOS API server can reach it
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # ── Flower — Celery monitoring dashboard ──────────────────────────────────
+  flower:
+    image: mher/flower:2.0
+    environment:
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      FLOWER_BASIC_AUTH: "admin:${FLOWER_PASSWORD:-changeme}"
+    ports:
+      - "5555:5555"         # http://your-home-ip:5555 to monitor jobs
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  redis_data:

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "mcp__Claude_in_Chrome__list_connected_browsers",
+      "mcp__Claude_in_Chrome__computer",
+      "Bash(python3 -c \"from app.models import *; from app.shared.base_model import Base; tables = sorted\\(Base.metadata.tables.keys\\(\\)\\); print\\('\\\\n'.join\\(tables\\)\\)\")",
+      "Bash(/Users/jayanthranganathan/Projects/Repositories/Claude/StitchyAi/Stitchy.ai/backend/.venv/bin/python seed.py)",
+      "Bash(xargs cat)",
+      "Bash(xargs ls -1)",
+      "Bash(xargs ls)",
+      "Bash(npx tsc *)",
+      "Bash(npx expo *)"
+    ]
+  }
+}

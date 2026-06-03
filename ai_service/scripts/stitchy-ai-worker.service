@@ -1,0 +1,39 @@
+# ── Systemd service for Stitchy AI worker ────────────────────────────────────
+#
+# Install:
+#   sudo cp stitchy-ai-worker.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable stitchy-ai-worker   # auto-start on boot
+#   sudo systemctl start stitchy-ai-worker    # start now
+#
+# Commands:
+#   sudo systemctl status stitchy-ai-worker   # check status
+#   sudo systemctl stop stitchy-ai-worker     # stop
+#   journalctl -u stitchy-ai-worker -f        # live logs
+
+[Unit]
+Description=Stitchy.ai AI Worker (GPU)
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/stitchy/ai_service
+
+# Start: bring up ai-worker, redis, flower
+ExecStart=/usr/bin/docker compose -f docker-compose.local.yml up -d
+
+# Stop: bring everything down gracefully
+ExecStop=/usr/bin/docker compose -f docker-compose.local.yml down
+
+# Restart policy — if the worker crashes, systemd restarts the whole compose stack
+Restart=on-failure
+RestartSec=30s
+
+# Give containers enough time to stop cleanly (model unloading takes a moment)
+TimeoutStopSec=120
+
+[Install]
+WantedBy=multi-user.target
