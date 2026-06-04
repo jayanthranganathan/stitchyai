@@ -14,6 +14,7 @@ import { useAIGenerationStore } from '../store/aiGenerationStore';
 import type {
   FashionCategory,
   GenerationJob,
+  GenerationStage,
   RegenerateRequest,
 } from '../types';
 
@@ -73,7 +74,7 @@ export function useGenerateDesigns() {
         job_id: resp.job_id,
         status: resp.status,
         queue_position: resp.queue_position,
-        stage: 'queued',
+        stage: 'uploading' as GenerationStage,
         progress_percent: 0,
         designs: [],
       } as Partial<GenerationJob>);
@@ -126,7 +127,7 @@ export function useRegenerateDesigns() {
       queryClient.setQueryData(aiKeys.status(resp.job_id), {
         job_id: resp.job_id,
         status: resp.status,
-        stage: 'queued',
+        stage: 'uploading' as GenerationStage,
         progress_percent: 0,
         designs: [],
       } as Partial<GenerationJob>);

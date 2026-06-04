@@ -49,7 +49,8 @@ function toYMD(d: Date): string {
 
 /** Parse a "YYYY-MM-DD" string to a JS Date (noon local to avoid DST edge cases) */
 function fromYMD(s: string): Date {
-  const [y, m, d] = s.split('-').map(Number);
+  const parts = s.split('-').map(Number);
+  const [y, m, d] = [parts[0] ?? 0, parts[1] ?? 1, parts[2] ?? 1];
   return new Date(y, m - 1, d, 12, 0, 0);
 }
 
