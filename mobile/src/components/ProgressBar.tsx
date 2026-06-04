@@ -13,7 +13,7 @@ export function ProgressBar({ percent, height = 3 }: Props) {
         colors={[colors.primary, colors.accent]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={{ height, width: `${Math.min(Math.max(percent, 0), 100)}%` as any }}
+        style={{ height, width: `${Math.min(Math.max(percent, 0), 100)}%` as `${number}%` }}
       />
     </View>
   );

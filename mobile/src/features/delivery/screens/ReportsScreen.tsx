@@ -78,7 +78,7 @@ export function ReportsScreen() {
           {Object.entries(byKind).map(([kind, count]) => (
             <View key={kind} style={styles.barRow}>
               <Text style={styles.barLabel} numberOfLines={1}>{KIND_LABEL[kind] ?? kind}</Text>
-              <View style={styles.barTrack}><View style={[styles.barFill, { width: `${(count / maxCount) * 100}%` as any }]} /></View>
+              <View style={styles.barTrack}><View style={[styles.barFill, { width: `${(count / maxCount) * 100}%` as `${number}%` }]} /></View>
               <Text style={styles.barCount}>{count}</Text>
             </View>
           ))}

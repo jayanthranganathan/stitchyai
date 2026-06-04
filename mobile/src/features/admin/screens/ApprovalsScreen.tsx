@@ -32,7 +32,7 @@ type TailorInterestRow = {
   expected_delivery_date: string | null;
 };
 
-export function ApprovalsScreen({}: AdminScreenProps<'Approvals'>) {
+export function ApprovalsScreen(_props: AdminScreenProps<'Approvals'>) {
   const [tab, setTab] = useState<TabKey>('tailor');
   const [tailorIdForOrder, setTailorIdForOrder] = useState<Record<string, string>>({});
 

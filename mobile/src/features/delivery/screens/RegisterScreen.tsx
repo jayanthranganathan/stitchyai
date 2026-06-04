@@ -29,7 +29,7 @@ export function RegisterScreen({ navigation }: DeliveryScreenProps<'Register'>) 
     section: { ...typography.h2, color: c.text, marginBottom: spacing.sm },
     grid: { flexDirection: 'row' as const, flexWrap: 'wrap' as const, gap: spacing.sm, marginBottom: spacing.lg },
     vehicleCard: {
-      width: '47%' as any,
+      width: '47%' as `${number}%`,
       alignItems: 'center' as const,
       padding: spacing.md,
       borderRadius: radii.lg,

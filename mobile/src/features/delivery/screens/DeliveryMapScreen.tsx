@@ -8,6 +8,17 @@ import { radii, spacing, typography, useThemedStyles } from '@/theme';
 
 import type { DeliveryScreenProps } from '@/navigation/types';
 
+type LocationPayload = {
+  street?: string;
+  city?: string;
+  pincode?: string;
+  lat?: number;
+  lng?: number;
+  address?: string;
+  contact_name?: string;
+  contact_phone?: string;
+};
+
 export function DeliveryMapScreen({ route }: DeliveryScreenProps<'DeliveryMap'>) {
   const { assignmentId } = route.params;
   const { data: assignments = [], isLoading } = useAssignments();
@@ -24,8 +35,8 @@ export function DeliveryMapScreen({ route }: DeliveryScreenProps<'DeliveryMap'>)
   }));
 
   const assignment = assignments.find((a) => a.id === assignmentId);
-  const pickup = assignment?.pickup_location;
-  const drop = assignment?.drop_location;
+  const pickup = assignment?.pickup_location as LocationPayload | undefined;
+  const drop = assignment?.drop_location as LocationPayload | undefined;
 
   function navigate(lat: number, lng: number) {
     Linking.openURL(`https://maps.apple.com/?daddr=${lat},${lng}&dirflg=d`);
@@ -50,9 +61,9 @@ export function DeliveryMapScreen({ route }: DeliveryScreenProps<'DeliveryMap'>)
       {drop && (
         <Card>
           <Text style={styles.sectionLabel}>LEG 2 — DROP-OFF TO CUSTOMER</Text>
-          <Text style={styles.address}>{[drop.street, drop.city, (drop as any).pincode].filter(Boolean).join(', ') || '—'}</Text>
-          {(drop as any).lat != null && (
-            <View style={styles.spacer}><Button title="Open in Maps — Drop-off" variant="secondary" onPress={() => navigate((drop as any).lat, (drop as any).lng)} /></View>
+          <Text style={styles.address}>{[drop.street, drop.city, drop.pincode].filter(Boolean).join(', ') || '—'}</Text>
+          {drop.lat != null && (
+            <View style={styles.spacer}><Button title="Open in Maps — Drop-off" variant="secondary" onPress={() => navigate(drop.lat!, drop.lng!)} /></View>
           )}
         </Card>
       )}

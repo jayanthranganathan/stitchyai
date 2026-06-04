@@ -12,7 +12,7 @@ import { formatters } from '@/utils/formatters';
 
 import type { TailorScreenProps } from '@/navigation/types';
 
-export function AvailableOrdersScreen({}: TailorScreenProps<'AvailableOrders'>) {
+export function AvailableOrdersScreen(_props: TailorScreenProps<'AvailableOrders'>) {
   const { data: orders = [], isLoading, refetch } = useAvailableOrders();
   const { mutateAsync: sendInterest, isPending } = useSendInterest();
   const [selected, setSelected] = useState<TailorOrder | null>(null);

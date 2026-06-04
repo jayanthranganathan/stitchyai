@@ -97,7 +97,7 @@ export function OrdersScreen({ navigation }: CustomerScreenProps<'Orders'>) {
                     Order #{item.id.slice(0, 8)}
                   </Text>
                   <Text style={{ fontSize: 14, fontWeight: '700' as const, color: colors.text, marginTop: 2 }}>
-                    {(item as any).design_name ?? (item as any).category_name ?? 'Custom order'}
+                    {item.design_name ?? item.category_name ?? 'Custom order'}
                   </Text>
 
                   {/* Progress bar */}
@@ -109,7 +109,7 @@ export function OrdersScreen({ navigation }: CustomerScreenProps<'Orders'>) {
                       colors={[colors.primary, colors.accent]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
-                      style={{ height: 3, width: `${item.progress_percent ?? 0}%` as any }}
+                      style={{ height: 3, width: `${item.progress_percent ?? 0}%` as `${number}%` }}
                     />
                   </View>
 

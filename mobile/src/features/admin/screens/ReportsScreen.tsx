@@ -101,7 +101,7 @@ export function ReportsScreen() {
               <Text style={styles.groupLabel}>{item.group}</Text>
               <Text style={styles.revenue}>{formatters.inr(item.total_revenue)}</Text>
             </View>
-            <View style={styles.barTrack}><View style={[styles.barFill, { width: `${(item.total_revenue / maxRevenue) * 100}%` as any }]} /></View>
+            <View style={styles.barTrack}><View style={[styles.barFill, { width: `${(item.total_revenue / maxRevenue) * 100}%` as `${number}%` }]} /></View>
             <Text style={styles.muted}>{item.completed_orders}/{item.total_orders} orders completed</Text>
           </Card>
         )}

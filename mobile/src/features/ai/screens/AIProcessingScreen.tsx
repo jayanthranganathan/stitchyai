@@ -70,8 +70,7 @@ function PulsingDots({ color }: { color: string }) {
     );
     animations.forEach((a) => a.start());
     return () => animations.forEach((a) => a.stop());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // animations array is stable — created once on mount
 
   return (
     <View style={{ flexDirection: 'row' as const, gap: 6, justifyContent: 'center' as const, marginTop: 8 }}>

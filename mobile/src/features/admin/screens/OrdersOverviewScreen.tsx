@@ -34,7 +34,7 @@ type OrderRow = {
   customer_name?: string | null; tailor_name?: string | null;
 };
 
-export function OrdersOverviewScreen({}: AdminScreenProps<'OrdersOverview'>) {
+export function OrdersOverviewScreen(_props: AdminScreenProps<'OrdersOverview'>) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [expanded, setExpanded] = useState<string | null>(null);
   const { colors } = useTheme();

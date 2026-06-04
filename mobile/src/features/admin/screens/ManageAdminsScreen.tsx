@@ -19,7 +19,7 @@ const ROLE_COLOR: Record<string, string> = {
   support: '#C99A4B',
 };
 
-export function ManageAdminsScreen({}: AdminScreenProps<'ManageAdmins'>) {
+export function ManageAdminsScreen(_props: AdminScreenProps<'ManageAdmins'>) {
   const { data: admins = [], isLoading, refetch } = useAdminList();
   const { mutateAsync: createAdmin, isPending } = useCreateAdmin();
   const [showForm, setShowForm] = useState(false);

@@ -8,6 +8,17 @@ import { radii, spacing, typography, useThemedStyles } from '@/theme';
 
 import type { DeliveryScreenProps } from '@/navigation/types';
 
+type LocationPayload = {
+  street?: string;
+  city?: string;
+  pincode?: string;
+  lat?: number;
+  lng?: number;
+  address?: string;
+  contact_name?: string;
+  contact_phone?: string;
+};
+
 const STATE_LABEL: Record<string, string> = {
   proposed: 'Pending acceptance',
   accepted: 'Accepted — head to pickup',
@@ -58,7 +69,7 @@ export function ActivePickupScreen({ route, navigation }: DeliveryScreenProps<'A
 
   const actions = NEXT_STATE[assignment.state] ?? [];
   const pickup = assignment.pickup_location;
-  const drop = assignment.drop_location;
+  const drop = assignment.drop_location as LocationPayload;
 
   return (
     <ScreenContainer>
@@ -77,9 +88,9 @@ export function ActivePickupScreen({ route, navigation }: DeliveryScreenProps<'A
       </Card>
       <Card>
         <Text style={styles.sectionLabel}>DROP-OFF — CUSTOMER</Text>
-        <Text style={styles.address}>{[drop.street, drop.city, (drop as any).pincode].filter(Boolean).join(', ') || '—'}</Text>
-        {(drop as any).lat != null && (
-          <View style={styles.spacer}><Button title="Navigate to drop-off" variant="ghost" onPress={() => Linking.openURL(`https://maps.apple.com/?daddr=${(drop as any).lat},${(drop as any).lng}&dirflg=d`)} /></View>
+        <Text style={styles.address}>{[drop.street, drop.city, drop.pincode].filter(Boolean).join(', ') || '—'}</Text>
+        {drop.lat != null && (
+          <View style={styles.spacer}><Button title="Navigate to drop-off" variant="ghost" onPress={() => Linking.openURL(`https://maps.apple.com/?daddr=${drop.lat},${drop.lng}&dirflg=d`)} /></View>
         )}
       </Card>
       {actions.length > 0 && (

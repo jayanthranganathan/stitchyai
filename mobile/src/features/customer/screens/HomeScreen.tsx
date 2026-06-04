@@ -219,7 +219,7 @@ export function HomeScreen({ navigation }: CustomerScreenProps<'Home'>) {
                   }}>
                     <View style={{ flex: 1 }}>
                       <Text style={{ fontSize: 14, fontWeight: '700' as const, color: colors.text }}>
-                        {(activeOrder as any).design_name ?? (activeOrder as any).category_name ?? 'Custom order'}
+                        {activeOrder.design_name ?? activeOrder.category_name ?? 'Custom order'}
                       </Text>
                       <Text style={{ fontSize: 10, color: colors.textMuted, marginTop: 2 }}>
                         Stitching · ETA {activeOrder.expected_delivery_date ? formatters.dateLong(activeOrder.expected_delivery_date) : 'TBD'}
@@ -238,7 +238,7 @@ export function HomeScreen({ navigation }: CustomerScreenProps<'Home'>) {
                       colors={[colors.primary, colors.accent]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
-                      style={{ height: 3, width: `${activeOrder.progress_percent ?? 0}%` as any }}
+                      style={{ height: 3, width: `${activeOrder.progress_percent ?? 0}%` as `${number}%` }}
                     />
                   </View>
                   <Text style={{ fontSize: 9, color: colors.textMuted, marginTop: 4 }}>

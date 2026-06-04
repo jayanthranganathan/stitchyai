@@ -67,7 +67,7 @@ export function OrderDetailScreen({ route }: TailorScreenProps<'OrderDetail'>) {
       <Text style={styles.muted}>Order #{order.id.slice(0, 8)}</Text>
       <Card>
         <Text style={styles.sectionLabel}>PROGRESS</Text>
-        <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${order.progress_percent}%` as any }]} /></View>
+        <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${order.progress_percent}%` as `${number}%` }]} /></View>
         <Text style={styles.progressText}>{order.progress_percent}%</Text>
       </Card>
       {order.measurements && Object.keys(order.measurements).length > 0 && (

@@ -73,7 +73,7 @@ export function ReportsScreen() {
           {Object.entries(byStatus).map(([status, count]) => (
             <View key={status} style={styles.barRow}>
               <Text style={styles.barLabel}>{status.replace('_', ' ')}</Text>
-              <View style={styles.barTrack}><View style={[styles.barFill, { width: `${(count / maxCount) * 100}%` as any }]} /></View>
+              <View style={styles.barTrack}><View style={[styles.barFill, { width: `${(count / maxCount) * 100}%` as `${number}%` }]} /></View>
               <Text style={styles.barCount}>{count}</Text>
             </View>
           ))}

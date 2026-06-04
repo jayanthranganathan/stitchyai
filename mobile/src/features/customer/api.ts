@@ -27,6 +27,9 @@ export type OrderSummary = {
   total_amount: number;
   currency: string;
   progress_percent: number;
+  // Optional enrichment fields returned by some endpoints
+  design_name?: string | null;
+  category_name?: string | null;
 };
 
 export const customerApi = {
