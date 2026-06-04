@@ -53,12 +53,12 @@ class InMemoryOtpProvider:
 class Msg91OtpProvider:
     """Sends and verifies OTPs via MSG91 v5 API.
 
-    Set these in .env:
-        MSG91_AUTH_KEY        — API auth key from MSG91 dashboard
-        MSG91_TEMPLATE_ID     — DLT-registered OTP template ID
-        MSG91_SENDER_ID       — 6-character sender ID (e.g. THUGIL)
+    Required env vars (Railway Variables tab):
+        MSG91_AUTH_KEY        — API auth key from MSG91 dashboard → Settings → API key
+        MSG91_TEMPLATE_ID     — OTP template ID from MSG91 dashboard (NOT the DLT template ID)
+        MSG91_SENDER_ID       — 6-character sender ID registered on DLT (e.g. THUGIL)
 
-    MSG91 generates the OTP itself; we never see the code.
+    MSG91 generates the OTP; we never see the code.
     verify() calls MSG91's verify endpoint with the code the user typed.
     """
 
@@ -66,10 +66,25 @@ class Msg91OtpProvider:
     _VERIFY_URL = "https://control.msg91.com/api/v5/otp/verify"
 
     def __init__(self) -> None:
-        if not settings.msg91_auth_key:
-            raise RuntimeError("MSG91_AUTH_KEY is not set in .env")
-        if not settings.msg91_template_id:
-            raise RuntimeError("MSG91_TEMPLATE_ID is not set in .env")
+        # Strip whitespace — a common Railway copy-paste issue
+        self._auth_key = settings.msg91_auth_key.strip()
+        self._template_id = settings.msg91_template_id.strip()
+
+        if not self._auth_key:
+            raise RuntimeError(
+                "MSG91_AUTH_KEY is empty. Set it in Railway → your service → Variables."
+            )
+        if not self._template_id:
+            raise RuntimeError(
+                "MSG91_TEMPLATE_ID is empty. Set it in Railway → your service → Variables."
+            )
+
+        # Log masked credentials so Railway logs confirm they are loaded
+        logger.info(
+            "[MSG91] Provider initialised — auth_key=...%s template_id=%s",
+            self._auth_key[-6:],
+            self._template_id,
+        )
 
     @staticmethod
     def _normalize(phone: str) -> str:
@@ -79,14 +94,23 @@ class Msg91OtpProvider:
     def send(self, phone: str) -> str:
         mobile = self._normalize(phone)
         payload = {
-            "template_id": settings.msg91_template_id,
+            "template_id": self._template_id,
             "mobile": mobile,
         }
         headers = {
-            "authkey": settings.msg91_auth_key,
+            "authkey": self._auth_key,
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
+
+        # Log the outgoing request so Railway shows it even if MSG91 never responds
+        logger.info(
+            "[MSG91] Sending OTP → mobile=%s template_id=%s url=%s",
+            mobile,
+            self._template_id,
+            self._SEND_URL,
+        )
+
         try:
             resp = httpx.post(
                 self._SEND_URL,
@@ -94,29 +118,45 @@ class Msg91OtpProvider:
                 headers=headers,
                 timeout=10,
             )
+            logger.info("[MSG91] HTTP %s ← %s", resp.status_code, resp.text[:300])
             resp.raise_for_status()
+
             data = resp.json()
-            logger.info("[MSG91] OTP sent to %s — response: %s", phone, data)
+
+            # MSG91 returns HTTP 200 even for errors — check the body type field
+            response_type = str(data.get("type", "")).lower()
+            if response_type == "error":
+                msg = data.get("message", "unknown error")
+                logger.error("[MSG91] API error response: %s", data)
+                raise RuntimeError(f"MSG91 rejected the request: {msg}")
+
+            logger.info("[MSG91] OTP dispatched to %s — response: %s", phone, data)
+
         except httpx.HTTPStatusError as exc:
             logger.error(
-                "[MSG91] Send failed: %s — %s", exc.response.status_code, exc.response.text
+                "[MSG91] HTTP error %s — body: %s",
+                exc.response.status_code,
+                exc.response.text[:300],
             )
-            raise RuntimeError(f"MSG91 send failed: {exc.response.text}") from exc
+            raise RuntimeError(
+                f"MSG91 returned HTTP {exc.response.status_code}: {exc.response.text}"
+            ) from exc
         except httpx.RequestError as exc:
-            logger.error("[MSG91] Network error: %s", exc)
-            raise RuntimeError("Could not reach MSG91 — check network") from exc
+            logger.error("[MSG91] Network error reaching %s: %s", self._SEND_URL, exc)
+            raise RuntimeError(
+                "Could not reach MSG91 — check Railway network and MSG91 status"
+            ) from exc
 
-        # MSG91 generates the OTP; we don't get it back.
-        # Return empty string — the verify() call uses MSG91's verify API.
         return ""
 
     def verify(self, phone: str, code: str) -> bool:
         mobile = self._normalize(phone)
         headers = {
-            "authkey": settings.msg91_auth_key,
+            "authkey": self._auth_key,
             "Accept": "application/json",
         }
         params = {"otp": code, "mobile": mobile}
+        logger.info("[MSG91] Verifying OTP → mobile=%s otp=%s", mobile, code)
         try:
             resp = httpx.get(
                 self._VERIFY_URL,
@@ -125,8 +165,7 @@ class Msg91OtpProvider:
                 timeout=10,
             )
             data = resp.json()
-            logger.info("[MSG91] Verify %s → %s", phone, data)
-            # MSG91 returns {"type": "success"} on match
+            logger.info("[MSG91] Verify response for %s → %s", phone, data)
             return str(data.get("type", "")).lower() == "success"
         except Exception as exc:
             logger.error("[MSG91] Verify error: %s", exc)
@@ -142,6 +181,15 @@ def get_otp_provider() -> OtpProvider:
     development / test  →  InMemoryOtpProvider (OTP = 123456, no SMS sent)
     production          →  Msg91OtpProvider    (real SMS via MSG91)
     """
-    if settings.app_env == "production":
+    env = (
+        settings.app_env.strip().lower()
+    )  # strip + lowercase — catches "Production", " production"
+    logger.info(
+        "[OTP] app_env=%r → using %s",
+        settings.app_env,
+        "MSG91" if env == "production" else "InMemory",
+    )
+
+    if env == "production":
         return Msg91OtpProvider()
     return InMemoryOtpProvider()
