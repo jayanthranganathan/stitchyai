@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, Any
 
 import jwt
 from fastapi import Depends, Header
@@ -33,7 +33,7 @@ def current_user(authorization: Annotated[str | None, Header()] = None) -> Curre
     return CurrentUser(user_id=payload["sub"], roles=payload.get("roles", []))
 
 
-def require_roles(*roles: str):
+def require_roles(*roles: str) -> Any:
     def _checker(user: Annotated[CurrentUser, Depends(current_user)]) -> CurrentUser:
         if not any(user.has_role(r) for r in roles):
             raise ForbiddenError(f"Requires one of roles: {', '.join(roles)}")

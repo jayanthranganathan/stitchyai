@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import JSON, Boolean, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -47,8 +47,8 @@ class CustomerProfile(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         unique=True,
         index=True,
     )
-    addresses: Mapped[list[dict]] = mapped_column(JSON, default=list)
-    preferences: Mapped[dict] = mapped_column(JSON, default=dict)
+    addresses: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    preferences: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
 
     user: Mapped[UserAccount] = relationship(back_populates="customer_profile")
     orders: Mapped[list[Order]] = relationship(back_populates="customer")

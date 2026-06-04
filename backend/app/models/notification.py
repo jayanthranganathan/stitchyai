@@ -5,6 +5,7 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import JSON, DateTime, Enum, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -42,5 +43,5 @@ class Notification(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     kind: Mapped[str] = mapped_column(String(64), index=True)
     title: Mapped[str] = mapped_column(String(255))
     body: Mapped[str] = mapped_column(String(2000))
-    payload: Mapped[dict] = mapped_column(JSON, default=dict)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

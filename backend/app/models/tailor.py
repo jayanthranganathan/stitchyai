@@ -5,7 +5,7 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import date, datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import (
     JSON,
@@ -75,7 +75,9 @@ class TailorProfile(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         index=True,
     )
     bio: Mapped[str | None] = mapped_column(String(2000), nullable=True)
-    documents: Mapped[dict] = mapped_column(JSON, default=dict)  # {aadhaar_url, pan_url, ...}
+    documents: Mapped[dict[str, Any]] = mapped_column(
+        JSON, default=dict
+    )  # {aadhaar_url, pan_url, ...}
     approval_state: Mapped[ApprovalState] = mapped_column(
         Enum(ApprovalState, native_enum=False, values_callable=lambda x: [e.value for e in x]),
         default=ApprovalState.REGISTERED,

@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
+import logging
 import uuid
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy.orm import Session
 
 from app.models.notification import DevicePlatform, FcmToken
 from app.modules.notifications.repository import NotificationsRepository
 from app.modules.notifications.schemas import NotificationPublic, RegisterDevice
+
+logger = logging.getLogger(__name__)
 
 
 class NotificationsService:
@@ -27,6 +31,24 @@ class NotificationsService:
         )
         saved = self.repo.upsert_token(token)
         return saved.id
+
+    def send_to_user(
+        self,
+        user_id: uuid.UUID,
+        title: str,
+        body: str,
+        payload: dict[str, Any] | None = None,
+    ) -> None:
+        """Send a push notification to all FCM devices registered to a user.
+        Currently logs only — wire up FCM when fcm_server_key is configured.
+        """
+        logger.info(
+            "Push notification → user=%s title=%r payload=%s",
+            user_id,
+            title,
+            payload,
+        )
+        # TODO: iterate self.repo.tokens_for_user(user_id) and call FCM HTTP v1 API
 
     def list(self, user_id: uuid.UUID) -> list[NotificationPublic]:
         return [

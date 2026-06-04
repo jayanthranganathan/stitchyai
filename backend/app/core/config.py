@@ -80,7 +80,7 @@ class Settings(BaseSettings):
     # --- CORS ---
     cors_origins_str: str = Field(default="*")
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def cors_origins(self) -> list[str]:
         """Parse comma-separated origins into a list."""
@@ -93,7 +93,7 @@ class Settings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings()  # type: ignore[call-arg]
+    return Settings()
 
 
 settings = get_settings()

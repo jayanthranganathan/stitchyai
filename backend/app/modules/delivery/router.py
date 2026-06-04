@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
@@ -51,7 +51,7 @@ def set_status(
 def my_assignments(
     _user: Annotated[CurrentUser, Depends(require_roles("delivery"))],
     _db: Annotated[Session, Depends(get_db)],
-) -> list[dict]:
+) -> list[dict[str, Any]]:
     # TODO: implement
     return []
 

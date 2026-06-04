@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -18,12 +19,12 @@ class OrderCreate(BaseModel):
     category_slug: str
     design_id: str | None = None
     proposal_id: str | None = None
-    measurements: dict = Field(default_factory=dict)
+    measurements: dict[str, Any] = Field(default_factory=dict)
     quantity: int = Field(default=1, ge=1)
     expected_delivery_date: date
     # delivery_address is optional — service falls back to the customer's
     # saved default address when this is empty.
-    delivery_address: dict = Field(default_factory=dict)
+    delivery_address: dict[str, Any] = Field(default_factory=dict)
     notes: str | None = None
 
 
@@ -53,4 +54,4 @@ class OrderProgress(BaseModel):
     progress_percent: int
     eta: date | None
     current_actor: str | None
-    history: list[dict]
+    history: list[dict[str, Any]]

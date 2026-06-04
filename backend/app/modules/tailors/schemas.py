@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -11,7 +12,7 @@ class TailorRegister(BaseModel):
     expertise_slugs: list[str] = Field(min_length=1)
     bio: str | None = None
     city: str | None = None
-    documents: dict = Field(default_factory=dict)
+    documents: dict[str, Any] = Field(default_factory=dict)
 
 
 class TailorMe(BaseModel):

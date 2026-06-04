@@ -16,7 +16,7 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import (
     JSON,
@@ -107,7 +107,7 @@ class AIGenerationJob(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     fabric_s3_bucket: Mapped[str] = mapped_column(String(128), nullable=False)
 
     # AI analysis results (written by Qwen after analysis)
-    fabric_analysis: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    fabric_analysis: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     # {"fabric_type": "Silk", "texture": "smooth", "motifs": [...], "colors": [...],
     #  "embroidery": "gold zari", "material": "Kanchipuram silk", "generated_prompt": "..."}
 

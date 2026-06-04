@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -22,6 +23,6 @@ class NotificationPublic(BaseModel):
     kind: str
     title: str
     body: str
-    payload: dict
+    payload: dict[str, Any]
     read_at: datetime | None
     created_at: datetime

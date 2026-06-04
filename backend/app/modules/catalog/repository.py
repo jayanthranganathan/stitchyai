@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import uuid
+
 from sqlalchemy.orm import Session
 
 from app.models.catalog import Category, Design
@@ -22,7 +24,7 @@ class CatalogRepository:
     def find_category(self, slug: str) -> Category | None:
         return self.db.query(Category).filter(Category.slug == slug).one_or_none()
 
-    def list_designs(self, category_id) -> list[Design]:
+    def list_designs(self, category_id: uuid.UUID) -> list[Design]:
         return (
             self.db.query(Design)
             .filter(Design.category_id == category_id, Design.is_active.is_(True))

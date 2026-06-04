@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
 class DeliveryRegister(BaseModel):
     vehicle_type: str = Field(pattern=r"^(bike|scooter|bicycle|car)$")
     license_url: str | None = None
-    documents: dict = Field(default_factory=dict)
+    documents: dict[str, Any] = Field(default_factory=dict)
     city: str | None = None
 
 

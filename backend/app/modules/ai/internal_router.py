@@ -84,7 +84,7 @@ def patch_job(
         _send_completion_notification(db, job, body.status == "completed")
 
 
-def _send_completion_notification(db: Session, job, success: bool) -> None:
+def _send_completion_notification(db: Session, job: Any, success: bool) -> None:
     """Fire-and-forget FCM push to the user who owns this job."""
     try:
         notif_service = NotificationsService(db)

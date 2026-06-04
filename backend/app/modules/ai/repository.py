@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session, selectinload
@@ -92,7 +93,7 @@ class AIGenerationRepository:
         progress_percent: int,
         celery_task_id: str | None = None,
         error_message: str | None = None,
-        fabric_analysis: dict | None = None,
+        fabric_analysis: dict[str, Any] | None = None,
         enhanced_prompt: str | None = None,
         inference_duration_seconds: float | None = None,
     ) -> None:
@@ -129,7 +130,7 @@ class AIGenerationRepository:
     def save_generated_designs(
         self,
         job_id: uuid.UUID,
-        designs: list[dict],
+        designs: list[dict[str, Any]],
         s3_bucket: str,
     ) -> list[AIGeneratedDesign]:
         """
@@ -244,7 +245,7 @@ class AIGenerationRepository:
                 design.moderation_status = status
             self.db.commit()
 
-    def get_usage_analytics(self) -> dict:
+    def get_usage_analytics(self) -> dict[str, Any]:
         total = self.db.scalar(select(func.count()).select_from(AIGenerationJob)) or 0
         completed = (
             self.db.scalar(

@@ -5,7 +5,7 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import date, datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import JSON, Date, DateTime, Enum, ForeignKey, Integer, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -49,7 +49,7 @@ class Order(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )
     expected_delivery_date: Mapped[date | None] = mapped_column(Date, index=True, nullable=True)
     placed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    delivery_address: Mapped[dict] = mapped_column(JSON, default=dict)
+    delivery_address: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     total_amount: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
     currency: Mapped[str] = mapped_column(String(3), default="INR")
     progress_percent: Mapped[int] = mapped_column(Integer, default=0)
@@ -82,7 +82,7 @@ class OrderItem(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     proposal_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("design_proposals.id"), nullable=True
     )
-    measurements: Mapped[dict] = mapped_column(JSON, default=dict)
+    measurements: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     quantity: Mapped[int] = mapped_column(Integer, default=1)
     unit_price: Mapped[float] = mapped_column(Numeric(12, 2))
     subtotal: Mapped[float] = mapped_column(Numeric(12, 2))

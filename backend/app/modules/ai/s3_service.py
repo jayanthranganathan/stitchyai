@@ -19,6 +19,7 @@ import logging
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import boto3
 from botocore.exceptions import ClientError
@@ -72,17 +73,17 @@ class _LocalS3:
         p.parent.mkdir(parents=True, exist_ok=True)
         return p
 
-    def put_object(self, *, Bucket: str, Key: str, Body: bytes, **_: object) -> dict:
+    def put_object(self, *, Bucket: str, Key: str, Body: bytes, **_: object) -> dict[str, Any]:
         self._path(Key).write_bytes(Body)
         logger.debug("LocalS3 put_object: %s", Key)
         return {}
 
-    def get_object(self, *, Bucket: str, Key: str, **_: object) -> dict:
+    def get_object(self, *, Bucket: str, Key: str, **_: object) -> dict[str, Any]:
         data = self._path(Key).read_bytes()
         return {"Body": _BytesBody(data)}
 
     def generate_presigned_url(
-        self, operation: str, *, Params: dict, ExpiresIn: int = 3600, **_: object
+        self, operation: str, *, Params: dict[str, Any], ExpiresIn: int = 3600, **_: object
     ) -> str:
         # Return a local file path as a pseudo-URL for dev tooling inspection.
         key = Params.get("Key", "")
@@ -112,7 +113,7 @@ class S3Service:
                     "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY must be set in .env. "
                     "To run locally without real S3, add S3_DEV_MODE=true to .env."
                 )
-            kwargs: dict = {
+            kwargs: dict[str, Any] = {
                 "region_name": settings.s3_region,
                 "aws_access_key_id": settings.aws_access_key_id,
                 "aws_secret_access_key": settings.aws_secret_access_key,

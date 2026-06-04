@@ -76,6 +76,16 @@ python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
 
+[[tool.mypy.overrides]]
+# boto3, celery, razorpay ship no type stubs — suppress import-untyped globally
+module = ["boto3", "botocore.*", "celery.*", "razorpay.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# AI and S3 modules wrap boto3/celery which return Any — ignore return-type strictness there
+module = ["app.modules.ai.celery_client", "app.modules.ai.s3_service"]
+warn_return_any = false
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]

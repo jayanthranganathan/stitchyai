@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import UnauthorizedError
@@ -40,7 +42,7 @@ class AuthService:
         )
 
     @staticmethod
-    def _derive_roles(user) -> list[str]:
+    def _derive_roles(user: Any) -> list[str]:
         roles = []
         if user.customer_profile:
             roles.append("customer")

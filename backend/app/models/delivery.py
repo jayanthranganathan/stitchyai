@@ -5,7 +5,7 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import JSON, Boolean, DateTime, Enum, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -54,7 +54,7 @@ class DeliveryProfile(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         Enum(VehicleType, values_callable=lambda x: [e.value for e in x]), default=VehicleType.BIKE
     )
     license_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    documents: Mapped[dict] = mapped_column(JSON, default=dict)
+    documents: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     approval_state: Mapped[ApprovalState] = mapped_column(
         Enum(ApprovalState, native_enum=False, values_callable=lambda x: [e.value for e in x]),
         default=ApprovalState.REGISTERED,
@@ -84,8 +84,8 @@ class DeliveryAssignment(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     kind: Mapped[DeliveryKind] = mapped_column(
         Enum(DeliveryKind, values_callable=lambda x: [e.value for e in x])
     )
-    pickup_location: Mapped[dict] = mapped_column(JSON)  # {address, lat, lng, contact}
-    drop_location: Mapped[dict] = mapped_column(JSON)
+    pickup_location: Mapped[dict[str, Any]] = mapped_column(JSON)  # {address, lat, lng, contact}
+    drop_location: Mapped[dict[str, Any]] = mapped_column(JSON)
     state: Mapped[DeliveryAssignmentState] = mapped_column(
         Enum(DeliveryAssignmentState, values_callable=lambda x: [e.value for e in x]),
         default=DeliveryAssignmentState.PROPOSED,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import enum
 import uuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import JSON, Boolean, Enum, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -44,6 +44,6 @@ class Payment(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         index=True,
     )
     signature_verified: Mapped[bool] = mapped_column(Boolean, default=False)
-    raw_payload: Mapped[dict] = mapped_column(JSON, default=dict)
+    raw_payload: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
 
     order: Mapped[Order] = relationship(back_populates="payment")

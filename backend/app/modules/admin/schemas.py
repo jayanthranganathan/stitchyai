@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -36,7 +38,7 @@ class PendingApproval(BaseModel):
     id: str
     name: str | None
     submitted_at: str
-    details: dict
+    details: dict[str, Any]
 
 
 class AdminOrderItem(BaseModel):

@@ -97,7 +97,7 @@ class AIGenerationService:
 
         return GenerateDesignsResponse(
             job_id=str(job.id),
-            status=job.status.value,
+            status=str(job.status),
             queue_position=queue_pos if queue_pos > 0 else None,
             estimated_wait_seconds=estimated_wait,
         )
@@ -129,7 +129,7 @@ class AIGenerationService:
         # Create a new job inheriting the original's fabric and category
         new_job = self.repo.create_job(
             user_id=user_id,
-            category=original.category.value,
+            category=str(original.category),
             fabric_s3_key=original.fabric_s3_key,
             fabric_s3_bucket=original.fabric_s3_bucket,
         )
@@ -138,7 +138,7 @@ class AIGenerationService:
             job_id=str(new_job.id),
             fabric_s3_key=original.fabric_s3_key,
             fabric_s3_bucket=original.fabric_s3_bucket,
-            category=original.category.value,
+            category=str(original.category),
             style_notes=body.style_notes,
             design_index=body.design_index,
             user_id=str(user_id),
@@ -155,7 +155,7 @@ class AIGenerationService:
         queue_pos = self.repo.get_queue_position(new_job.id)
         return GenerateDesignsResponse(
             job_id=str(new_job.id),
-            status=new_job.status.value,
+            status=str(new_job.status),
             queue_position=queue_pos if queue_pos > 0 else None,
             estimated_wait_seconds=queue_pos * AVG_GENERATION_SECONDS + AVG_GENERATION_SECONDS,
         )
@@ -248,13 +248,13 @@ class AIGenerationService:
     def _to_public(self, job: AIGenerationJob) -> GenerationJobPublic:
         return GenerationJobPublic(
             job_id=str(job.id),
-            status=job.status.value,
-            stage=job.stage.value,
+            status=str(job.status),
+            stage=str(job.stage),
             progress_percent=job.progress_percent,
             queue_position=self.repo.get_queue_position(job.id)
             if job.status == JobStatus.QUEUED
             else None,
-            category=job.category.value,
+            category=str(job.category),
             fabric_analysis=FabricAnalysisSchema(**job.fabric_analysis)
             if job.fabric_analysis
             else None,
