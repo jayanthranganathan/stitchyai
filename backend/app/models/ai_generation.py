@@ -52,11 +52,11 @@ class GenerationStage(enum.StrEnum):
     """Granular pipeline stage for real-time progress UI."""
 
     UPLOADING = "uploading"
-    SEGMENTING = "segmenting"      # SAM2 fabric isolation
-    ANALYZING = "analyzing"        # Qwen2.5-VL fabric analysis
-    PROMPTING = "prompting"        # Prompt engineering
-    GENERATING = "generating"      # FLUX.1 + IP Adapter + ControlNet
-    FINALIZING = "finalizing"      # S3 upload + DB write
+    SEGMENTING = "segmenting"  # SAM2 fabric isolation
+    ANALYZING = "analyzing"  # Qwen2.5-VL fabric analysis
+    PROMPTING = "prompting"  # Prompt engineering
+    GENERATING = "generating"  # FLUX.1 + IP Adapter + ControlNet
+    FINALIZING = "finalizing"  # S3 upload + DB write
     DONE = "done"
 
 

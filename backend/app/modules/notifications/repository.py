@@ -14,9 +14,7 @@ class NotificationsRepository:
         self.db = db
 
     def upsert_token(self, token: FcmToken) -> FcmToken:
-        existing = (
-            self.db.query(FcmToken).filter(FcmToken.token == token.token).one_or_none()
-        )
+        existing = self.db.query(FcmToken).filter(FcmToken.token == token.token).one_or_none()
         if existing:
             existing.user_account_id = token.user_account_id
             existing.device_id = token.device_id

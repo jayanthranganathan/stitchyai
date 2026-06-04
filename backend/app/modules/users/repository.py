@@ -18,7 +18,5 @@ class UsersRepository:
 
     def get_customer_profile(self, user_id: uuid.UUID) -> CustomerProfile | None:
         return (
-            self.db.query(CustomerProfile)
-            .filter(CustomerProfile.user_id == user_id)
-            .one_or_none()
+            self.db.query(CustomerProfile).filter(CustomerProfile.user_id == user_id).one_or_none()
         )

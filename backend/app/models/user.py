@@ -35,9 +35,7 @@ class UserAccount(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     delivery_profile: Mapped[DeliveryProfile | None] = relationship(
         back_populates="user", uselist=False
     )
-    admin_profile: Mapped[AdminProfile | None] = relationship(
-        back_populates="user", uselist=False
-    )
+    admin_profile: Mapped[AdminProfile | None] = relationship(back_populates="user", uselist=False)
 
 
 class CustomerProfile(Base, UUIDPrimaryKeyMixin, TimestampMixin):

@@ -40,7 +40,8 @@ class Payment(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     currency: Mapped[str] = mapped_column(String(3), default="INR")
     status: Mapped[PaymentStatus] = mapped_column(
         Enum(PaymentStatus, values_callable=lambda x: [e.value for e in x]),
-        default=PaymentStatus.CREATED, index=True
+        default=PaymentStatus.CREATED,
+        index=True,
     )
     signature_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     raw_payload: Mapped[dict] = mapped_column(JSON, default=dict)

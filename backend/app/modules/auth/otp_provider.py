@@ -20,12 +20,14 @@ logger = logging.getLogger(__name__)
 
 # ── Protocol ──────────────────────────────────────────────────────────────────
 
+
 class OtpProvider(Protocol):
-    def send(self, phone: str) -> str: ...      # returns code only for dev/mock
+    def send(self, phone: str) -> str: ...  # returns code only for dev/mock
     def verify(self, phone: str, code: str) -> bool: ...
 
 
 # ── Dev / Test provider ───────────────────────────────────────────────────────
+
 
 class InMemoryOtpProvider:
     """Generates and stores OTPs in-process. Dev and tests only.
@@ -47,6 +49,7 @@ class InMemoryOtpProvider:
 
 # ── MSG91 production provider ─────────────────────────────────────────────────
 
+
 class Msg91OtpProvider:
     """Sends and verifies OTPs via MSG91 v5 API.
 
@@ -59,7 +62,7 @@ class Msg91OtpProvider:
     verify() calls MSG91's verify endpoint with the code the user typed.
     """
 
-    _SEND_URL   = "https://control.msg91.com/api/v5/otp"
+    _SEND_URL = "https://control.msg91.com/api/v5/otp"
     _VERIFY_URL = "https://control.msg91.com/api/v5/otp/verify"
 
     def __init__(self) -> None:
@@ -77,12 +80,12 @@ class Msg91OtpProvider:
         mobile = self._normalize(phone)
         payload = {
             "template_id": settings.msg91_template_id,
-            "mobile":       mobile,
+            "mobile": mobile,
         }
         headers = {
-            "authkey":      settings.msg91_auth_key,
+            "authkey": settings.msg91_auth_key,
             "Content-Type": "application/json",
-            "Accept":       "application/json",
+            "Accept": "application/json",
         }
         try:
             resp = httpx.post(
@@ -95,7 +98,9 @@ class Msg91OtpProvider:
             data = resp.json()
             logger.info("[MSG91] OTP sent to %s — response: %s", phone, data)
         except httpx.HTTPStatusError as exc:
-            logger.error("[MSG91] Send failed: %s — %s", exc.response.status_code, exc.response.text)
+            logger.error(
+                "[MSG91] Send failed: %s — %s", exc.response.status_code, exc.response.text
+            )
             raise RuntimeError(f"MSG91 send failed: {exc.response.text}") from exc
         except httpx.RequestError as exc:
             logger.error("[MSG91] Network error: %s", exc)
@@ -109,7 +114,7 @@ class Msg91OtpProvider:
         mobile = self._normalize(phone)
         headers = {
             "authkey": settings.msg91_auth_key,
-            "Accept":  "application/json",
+            "Accept": "application/json",
         }
         params = {"otp": code, "mobile": mobile}
         try:
@@ -129,6 +134,7 @@ class Msg91OtpProvider:
 
 
 # ── Factory ───────────────────────────────────────────────────────────────────
+
 
 def get_otp_provider() -> OtpProvider:
     """Return the right provider based on APP_ENV.

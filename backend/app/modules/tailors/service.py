@@ -64,8 +64,12 @@ class TailorsService:
         assignments = (
             self.db.query(OrderAssignment)
             .options(
-                joinedload(OrderAssignment.order).joinedload(Order.items).joinedload(OrderItem.design),
-                joinedload(OrderAssignment.order).joinedload(Order.customer).joinedload(CustomerProfile.user),
+                joinedload(OrderAssignment.order)
+                .joinedload(Order.items)
+                .joinedload(OrderItem.design),
+                joinedload(OrderAssignment.order)
+                .joinedload(Order.customer)
+                .joinedload(CustomerProfile.user),
             )
             .filter(
                 OrderAssignment.tailor_id == profile.id,

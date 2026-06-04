@@ -15,9 +15,7 @@ class DeliveryRepository:
 
     def get_by_user(self, user_id: uuid.UUID) -> DeliveryProfile | None:
         return (
-            self.db.query(DeliveryProfile)
-            .filter(DeliveryProfile.user_id == user_id)
-            .one_or_none()
+            self.db.query(DeliveryProfile).filter(DeliveryProfile.user_id == user_id).one_or_none()
         )
 
     def list_assignments(self, partner_id: uuid.UUID) -> list[DeliveryAssignment]:

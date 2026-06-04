@@ -50,7 +50,9 @@ tailor_expertise_link = Table(
     "tailor_expertise_link",
     Base.metadata,
     Column("tailor_id", UUID(as_uuid=True), ForeignKey("tailor_profiles.id", ondelete="CASCADE")),
-    Column("expertise_id", UUID(as_uuid=True), ForeignKey("tailor_expertise.id", ondelete="CASCADE")),
+    Column(
+        "expertise_id", UUID(as_uuid=True), ForeignKey("tailor_expertise.id", ondelete="CASCADE")
+    ),
 )
 
 
@@ -75,8 +77,9 @@ class TailorProfile(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     bio: Mapped[str | None] = mapped_column(String(2000), nullable=True)
     documents: Mapped[dict] = mapped_column(JSON, default=dict)  # {aadhaar_url, pan_url, ...}
     approval_state: Mapped[ApprovalState] = mapped_column(
-    Enum(ApprovalState, native_enum=False, values_callable=lambda x: [e.value for e in x]),
-        default=ApprovalState.REGISTERED, index=True
+        Enum(ApprovalState, native_enum=False, values_callable=lambda x: [e.value for e in x]),
+        default=ApprovalState.REGISTERED,
+        index=True,
     )
     rating: Mapped[float | None] = mapped_column(Numeric(3, 2), nullable=True)
     city: Mapped[str | None] = mapped_column(String(128), index=True, nullable=True)
@@ -120,7 +123,8 @@ class OrderAssignment(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     agreed_delivery_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     state: Mapped[AssignmentState] = mapped_column(
         Enum(AssignmentState, values_callable=lambda x: [e.value for e in x]),
-        default=AssignmentState.PROPOSED, index=True
+        default=AssignmentState.PROPOSED,
+        index=True,
     )
     progress_percent: Mapped[int] = mapped_column(Integer, default=0)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

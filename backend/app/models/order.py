@@ -44,7 +44,8 @@ class Order(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )
     status: Mapped[OrderStatus] = mapped_column(
         Enum(OrderStatus, values_callable=lambda x: [e.value for e in x]),
-        default=OrderStatus.DRAFT, index=True
+        default=OrderStatus.DRAFT,
+        index=True,
     )
     expected_delivery_date: Mapped[date | None] = mapped_column(Date, index=True, nullable=True)
     placed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

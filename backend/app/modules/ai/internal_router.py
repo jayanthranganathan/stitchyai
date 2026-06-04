@@ -62,7 +62,9 @@ def patch_job(
         job_id,
         status=JobStatus(body.status) if body.status else job.status,
         stage=GenerationStage(body.stage) if body.stage else job.stage,
-        progress_percent=body.progress_percent if body.progress_percent is not None else job.progress_percent,
+        progress_percent=body.progress_percent
+        if body.progress_percent is not None
+        else job.progress_percent,
         error_message=body.error_message,
         fabric_analysis=body.fabric_analysis,
         enhanced_prompt=body.enhanced_prompt,
@@ -105,6 +107,7 @@ def _send_completion_notification(db: Session, job, success: bool) -> None:
         )
     except Exception as exc:
         import logging
+
         logging.getLogger(__name__).warning(
             "Push notification failed", extra={"job_id": str(job.id), "error": str(exc)}
         )

@@ -71,7 +71,7 @@ class Settings(BaseSettings):
 
     # --- AI inference service ---
     ai_service_url: str = "http://ai-service:8001"  # internal docker network URL
-    ai_service_api_key: str = ""                    # shared secret for service-to-service calls
+    ai_service_api_key: str = ""  # shared secret for service-to-service calls
 
     # --- Celery / AI queue ---
     # Redis url is already defined above (shared broker)
@@ -84,11 +84,12 @@ class Settings(BaseSettings):
     @property
     def cors_origins(self) -> list[str]:
         """Parse comma-separated origins into a list."""
-        return [origin.strip() for origin in self.cors_origins_str.split(',')]
+        return [origin.strip() for origin in self.cors_origins_str.split(",")]
 
     @property
     def is_production(self) -> bool:
         return self.app_env == "production"
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:

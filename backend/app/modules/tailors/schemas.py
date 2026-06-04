@@ -36,8 +36,8 @@ class ProgressUpdate(BaseModel):
 
 
 class TailorOrderSummary(BaseModel):
-    id: str                              # order UUID
-    status: str                          # order status or "available"
+    id: str  # order UUID
+    status: str  # order status or "available"
     progress_percent: int
     expected_delivery_date: date | None
     placed_at: str | None

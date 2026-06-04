@@ -59,8 +59,8 @@ def create_app() -> FastAPI:
         tracking_router,
         notifications_router,
         reports_router,
-        ai_router,            # ← AI generation endpoints (public, JWT required)
-        ai_internal_router,   # ← AI worker callbacks (service-key required)
+        ai_router,  # ← AI generation endpoints (public, JWT required)
+        ai_internal_router,  # ← AI worker callbacks (service-key required)
     ):
         app.include_router(router, prefix=API_PREFIX)
 

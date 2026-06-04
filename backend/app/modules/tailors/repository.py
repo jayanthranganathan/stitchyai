@@ -14,16 +14,10 @@ class TailorsRepository:
         self.db = db
 
     def get_by_user(self, user_id: uuid.UUID) -> TailorProfile | None:
-        return (
-            self.db.query(TailorProfile)
-            .filter(TailorProfile.user_id == user_id)
-            .one_or_none()
-        )
+        return self.db.query(TailorProfile).filter(TailorProfile.user_id == user_id).one_or_none()
 
     def find_expertise(self, slugs: list[str]) -> list[TailorExpertise]:
-        return (
-            self.db.query(TailorExpertise).filter(TailorExpertise.slug.in_(slugs)).all()
-        )
+        return self.db.query(TailorExpertise).filter(TailorExpertise.slug.in_(slugs)).all()
 
     def list_assignments(self, tailor_id: uuid.UUID) -> list[OrderAssignment]:
         return (
@@ -34,8 +28,4 @@ class TailorsRepository:
         )
 
     def list_interests(self, tailor_id: uuid.UUID) -> list[TailorInterest]:
-        return (
-            self.db.query(TailorInterest)
-            .filter(TailorInterest.tailor_id == tailor_id)
-            .all()
-        )
+        return self.db.query(TailorInterest).filter(TailorInterest.tailor_id == tailor_id).all()

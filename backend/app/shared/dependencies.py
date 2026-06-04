@@ -36,9 +36,7 @@ def current_user(authorization: Annotated[str | None, Header()] = None) -> Curre
 def require_roles(*roles: str):
     def _checker(user: Annotated[CurrentUser, Depends(current_user)]) -> CurrentUser:
         if not any(user.has_role(r) for r in roles):
-            raise ForbiddenError(
-                f"Requires one of roles: {', '.join(roles)}"
-            )
+            raise ForbiddenError(f"Requires one of roles: {', '.join(roles)}")
         return user
 
     return _checker

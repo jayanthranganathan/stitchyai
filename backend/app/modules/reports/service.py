@@ -16,12 +16,8 @@ class ReportsService:
         self.repo = ReportsRepository(db)
 
     def orders(self, *, from_date: date, to_date: date, group_by: str) -> OrdersReport:
-        rows = self.repo.orders_grouped(
-            from_date=from_date, to_date=to_date, group_by=group_by
-        )
-        groups = [
-            OrdersByGroup(group=g, orders=o, revenue=r) for g, o, r in rows
-        ]
+        rows = self.repo.orders_grouped(from_date=from_date, to_date=to_date, group_by=group_by)
+        groups = [OrdersByGroup(group=g, orders=o, revenue=r) for g, o, r in rows]
         return OrdersReport(
             from_date=from_date,
             to_date=to_date,

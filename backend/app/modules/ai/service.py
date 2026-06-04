@@ -120,9 +120,7 @@ class AIGenerationService:
 
     # ── regenerate ──────────────────────────────────────────────────────────
 
-    def regenerate(
-        self, user_id: uuid.UUID, body: RegenerateRequest
-    ) -> GenerateDesignsResponse:
+    def regenerate(self, user_id: uuid.UUID, body: RegenerateRequest) -> GenerateDesignsResponse:
         original = self.repo.get_job_for_user(uuid.UUID(body.job_id), user_id)
         if not original:
             raise NotFoundError("Original generation job not found")
@@ -191,8 +189,10 @@ class AIGenerationService:
         mod = ModerationStatus(moderation_filter) if moderation_filter else None
         st = JobStatus(status_filter) if status_filter else None
         jobs = self.repo.list_all_jobs(
-            limit=limit, offset=offset,
-            moderation_filter=mod, status_filter=st,
+            limit=limit,
+            offset=offset,
+            moderation_filter=mod,
+            status_filter=st,
         )
         return [self._to_public(j) for j in jobs]
 
@@ -220,14 +220,17 @@ class AIGenerationService:
 
     def _enforce_rate_limit(self, user_id: uuid.UUID) -> None:
         since = datetime.now(UTC) - timedelta(hours=24)
-        count = self.db.scalar(
-            select(func.count())
-            .select_from(AIGenerationJob)
-            .where(
-                AIGenerationJob.user_id == user_id,
-                AIGenerationJob.created_at >= since,
+        count = (
+            self.db.scalar(
+                select(func.count())
+                .select_from(AIGenerationJob)
+                .where(
+                    AIGenerationJob.user_id == user_id,
+                    AIGenerationJob.created_at >= since,
+                )
             )
-        ) or 0
+            or 0
+        )
         if count >= RATE_LIMIT_JOBS_PER_DAY:
             raise ConflictError(
                 f"Daily generation limit reached ({RATE_LIMIT_JOBS_PER_DAY} per 24 h). "
@@ -237,6 +240,7 @@ class AIGenerationService:
     @staticmethod
     def _validate_category(category: str) -> None:
         from app.models.ai_generation import FashionCategory
+
         valid = {e.value for e in FashionCategory}
         if category not in valid:
             raise ValidationError(f"Invalid category '{category}'. Valid: {sorted(valid)}")
@@ -247,9 +251,13 @@ class AIGenerationService:
             status=job.status.value,
             stage=job.stage.value,
             progress_percent=job.progress_percent,
-            queue_position=self.repo.get_queue_position(job.id) if job.status == JobStatus.QUEUED else None,
+            queue_position=self.repo.get_queue_position(job.id)
+            if job.status == JobStatus.QUEUED
+            else None,
             category=job.category.value,
-            fabric_analysis=FabricAnalysisSchema(**job.fabric_analysis) if job.fabric_analysis else None,
+            fabric_analysis=FabricAnalysisSchema(**job.fabric_analysis)
+            if job.fabric_analysis
+            else None,
             enhanced_prompt=job.enhanced_prompt,
             designs=[self._design_to_public(d) for d in job.designs],
             error_message=job.error_message,

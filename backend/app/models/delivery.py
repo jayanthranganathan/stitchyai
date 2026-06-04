@@ -56,8 +56,9 @@ class DeliveryProfile(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     license_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     documents: Mapped[dict] = mapped_column(JSON, default=dict)
     approval_state: Mapped[ApprovalState] = mapped_column(
-    Enum(ApprovalState, native_enum=False, values_callable=lambda x: [e.value for e in x]),
-        default=ApprovalState.REGISTERED, index=True
+        Enum(ApprovalState, native_enum=False, values_callable=lambda x: [e.value for e in x]),
+        default=ApprovalState.REGISTERED,
+        index=True,
     )
     is_online: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     last_lat: Mapped[float | None] = mapped_column(Float, nullable=True)
@@ -87,7 +88,8 @@ class DeliveryAssignment(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     drop_location: Mapped[dict] = mapped_column(JSON)
     state: Mapped[DeliveryAssignmentState] = mapped_column(
         Enum(DeliveryAssignmentState, values_callable=lambda x: [e.value for e in x]),
-        default=DeliveryAssignmentState.PROPOSED, index=True
+        default=DeliveryAssignmentState.PROPOSED,
+        index=True,
     )
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -20,12 +20,8 @@ router = APIRouter(prefix="/reports", tags=["reports"])
 def orders_report(
     from_date: Annotated[date, Query(alias="from")],
     to_date: Annotated[date, Query(alias="to")],
-    group_by: Annotated[
-        str, Query(pattern=r"^(city|tailor|delivery_partner|customer)$")
-    ] = "city",
+    group_by: Annotated[str, Query(pattern=r"^(city|tailor|delivery_partner|customer)$")] = "city",
     _user: Annotated[CurrentUser, Depends(require_roles("admin"))] = None,  # type: ignore[assignment]
     db: Annotated[Session, Depends(get_db)] = None,  # type: ignore[assignment]
 ) -> OrdersReport:
-    return ReportsService(db).orders(
-        from_date=from_date, to_date=to_date, group_by=group_by
-    )
+    return ReportsService(db).orders(from_date=from_date, to_date=to_date, group_by=group_by)

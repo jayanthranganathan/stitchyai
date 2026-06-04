@@ -22,20 +22,12 @@ class OrdersService:
 
     def create(self, user_id: uuid.UUID, body: OrderCreate) -> OrderPublic:
         # ── 1. Resolve customer profile from user_id ──────────────────────────
-        customer = (
-            self.db.query(CustomerProfile)
-            .filter(CustomerProfile.user_id == user_id)
-            .first()
-        )
+        customer = self.db.query(CustomerProfile).filter(CustomerProfile.user_id == user_id).first()
         if customer is None:
             raise NotFoundError("Customer profile not found for this account")
 
         # ── 2. Resolve category from slug ─────────────────────────────────────
-        category = (
-            self.db.query(Category)
-            .filter(Category.slug == body.category_slug)
-            .first()
-        )
+        category = self.db.query(Category).filter(Category.slug == body.category_slug).first()
         if category is None:
             raise NotFoundError(f"Category '{body.category_slug}' not found")
 
@@ -84,11 +76,7 @@ class OrdersService:
         return self._to_public(order)
 
     def _resolve_customer(self, user_id: uuid.UUID) -> CustomerProfile:
-        customer = (
-            self.db.query(CustomerProfile)
-            .filter(CustomerProfile.user_id == user_id)
-            .first()
-        )
+        customer = self.db.query(CustomerProfile).filter(CustomerProfile.user_id == user_id).first()
         if customer is None:
             raise NotFoundError("Customer profile not found for this account")
         return customer

@@ -31,6 +31,7 @@ router = APIRouter(prefix="/ai", tags=["ai-generation"])
 
 # ─── fabric upload ─────────────────────────────────────────────────────────
 
+
 @router.post(
     "/fabric-upload",
     response_model=FabricUploadResponse,
@@ -47,6 +48,7 @@ async def upload_fabric(
 
 
 # ─── generation ────────────────────────────────────────────────────────────
+
 
 @router.post(
     "/generate-designs",
@@ -104,6 +106,7 @@ def regenerate(
 
 # ─── save / history ────────────────────────────────────────────────────────
 
+
 @router.post(
     "/save-design",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -144,6 +147,7 @@ def get_history(
 
 # ─── admin endpoints ───────────────────────────────────────────────────────
 
+
 @router.get(
     "/admin/jobs",
     response_model=list[GenerationJobPublic],
@@ -158,7 +162,8 @@ def admin_list_jobs(
     offset: int = Query(default=0),
 ) -> list[GenerationJobPublic]:
     return AIGenerationService(db).admin_list_jobs(
-        limit=limit, offset=offset,
+        limit=limit,
+        offset=offset,
         moderation_filter=moderation,
         status_filter=status_filter,
     )

@@ -53,9 +53,7 @@ class AIGenerationRepository:
             .options(selectinload(AIGenerationJob.designs))
         )
 
-    def get_job_for_user(
-        self, job_id: uuid.UUID, user_id: uuid.UUID
-    ) -> AIGenerationJob | None:
+    def get_job_for_user(self, job_id: uuid.UUID, user_id: uuid.UUID) -> AIGenerationJob | None:
         return self.db.scalar(
             select(AIGenerationJob)
             .where(
@@ -248,24 +246,35 @@ class AIGenerationRepository:
 
     def get_usage_analytics(self) -> dict:
         total = self.db.scalar(select(func.count()).select_from(AIGenerationJob)) or 0
-        completed = self.db.scalar(
-            select(func.count()).select_from(AIGenerationJob)
-            .where(AIGenerationJob.status == JobStatus.COMPLETED)
-        ) or 0
-        failed = self.db.scalar(
-            select(func.count()).select_from(AIGenerationJob)
-            .where(AIGenerationJob.status == JobStatus.FAILED)
-        ) or 0
-        total_designs = self.db.scalar(
-            select(func.count()).select_from(AIGeneratedDesign)
-        ) or 0
-        saved_designs = self.db.scalar(
-            select(func.count()).select_from(AIGeneratedDesign)
-            .where(AIGeneratedDesign.is_saved == True)  # noqa: E712
-        ) or 0
+        completed = (
+            self.db.scalar(
+                select(func.count())
+                .select_from(AIGenerationJob)
+                .where(AIGenerationJob.status == JobStatus.COMPLETED)
+            )
+            or 0
+        )
+        failed = (
+            self.db.scalar(
+                select(func.count())
+                .select_from(AIGenerationJob)
+                .where(AIGenerationJob.status == JobStatus.FAILED)
+            )
+            or 0
+        )
+        total_designs = self.db.scalar(select(func.count()).select_from(AIGeneratedDesign)) or 0
+        saved_designs = (
+            self.db.scalar(
+                select(func.count())
+                .select_from(AIGeneratedDesign)
+                .where(AIGeneratedDesign.is_saved == True)  # noqa: E712
+            )
+            or 0
+        )
         avg_duration = self.db.scalar(
-            select(func.avg(AIGenerationJob.inference_duration_seconds))
-            .where(AIGenerationJob.inference_duration_seconds.isnot(None))
+            select(func.avg(AIGenerationJob.inference_duration_seconds)).where(
+                AIGenerationJob.inference_duration_seconds.isnot(None)
+            )
         )
         return {
             "total_jobs": total,

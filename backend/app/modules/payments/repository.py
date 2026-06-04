@@ -14,6 +14,4 @@ class PaymentsRepository:
         self.db = db
 
     def get_by_order(self, order_id: uuid.UUID) -> Payment | None:
-        return (
-            self.db.query(Payment).filter(Payment.order_id == order_id).one_or_none()
-        )
+        return self.db.query(Payment).filter(Payment.order_id == order_id).one_or_none()

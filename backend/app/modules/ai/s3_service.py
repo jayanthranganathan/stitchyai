@@ -33,24 +33,27 @@ logger = logging.getLogger(__name__)
 
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/webp"}
 ALLOWED_MAGIC_BYTES = {
-    b"\xff\xd8\xff",       # JPEG
+    b"\xff\xd8\xff",  # JPEG
     b"\x89PNG\r\n\x1a\n",  # PNG
-    b"RIFF",               # WebP (RIFF container)
+    b"RIFF",  # WebP (RIFF container)
 }
 MAX_UPLOAD_SIZE_BYTES = 15 * 1024 * 1024  # 15 MB
-SIGNED_URL_EXPIRY_SECONDS = 3600          # 1 hour for results
-FABRIC_UPLOAD_EXPIRY_SECONDS = 300        # 5 min (just for preview)
+SIGNED_URL_EXPIRY_SECONDS = 3600  # 1 hour for results
+FABRIC_UPLOAD_EXPIRY_SECONDS = 300  # 5 min (just for preview)
+
 
 # Resolved via pydantic-settings (reads .env) — NOT os.getenv (which ignores .env).
 # Evaluated lazily inside S3Service.__init__ so settings is fully loaded first.
 def _dev_mode() -> bool:
     return settings.s3_dev_mode
 
+
 def _dev_storage_dir() -> Path:
     return Path(settings.local_storage_dir)
 
 
 # ─── dev-mode local storage (no AWS credentials needed) ───────────────────────
+
 
 class _LocalS3:
     """Drop-in replacement for the boto3 client used in dev/test mode."""

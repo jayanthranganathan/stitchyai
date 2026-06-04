@@ -38,13 +38,12 @@ class AdminService:
     # ── Orders ────────────────────────────────────────────────────────────────
 
     def list_orders(self, status: str | None) -> list[AdminOrderPublic]:
-        query = (
-            self.db.query(Order)
-            .options(
-                joinedload(Order.customer).joinedload(CustomerProfile.user),
-                joinedload(Order.items),
-                joinedload(Order.assignments).joinedload(OrderAssignment.tailor).joinedload(TailorProfile.user),
-            )
+        query = self.db.query(Order).options(
+            joinedload(Order.customer).joinedload(CustomerProfile.user),
+            joinedload(Order.items),
+            joinedload(Order.assignments)
+            .joinedload(OrderAssignment.tailor)
+            .joinedload(TailorProfile.user),
         )
         if status:
             with contextlib.suppress(ValueError):
@@ -62,13 +61,15 @@ class AdminService:
                 f"Order is '{order.status.value}' — only 'placed' orders can be approved"
             )
         order.status = OrderStatus.CONFIRMED
-        self.db.add(OrderStatusHistory(
-            order_id=order.id,
-            status=OrderStatus.CONFIRMED,
-            progress_percent=order.progress_percent,
-            note="Order approved by admin — open for tailor interest",
-            actor_role="admin",
-        ))
+        self.db.add(
+            OrderStatusHistory(
+                order_id=order.id,
+                status=OrderStatus.CONFIRMED,
+                progress_percent=order.progress_percent,
+                note="Order approved by admin — open for tailor interest",
+                actor_role="admin",
+            )
+        )
         self.db.commit()
 
     def assign_order(self, order_id: uuid.UUID, body: AssignTailor) -> None:
@@ -102,13 +103,15 @@ class AdminService:
         order.progress_percent = 15
 
         # Append history entry
-        self.db.add(OrderStatusHistory(
-            order_id=order.id,
-            status=OrderStatus.ASSIGNED,
-            progress_percent=15,
-            note="Assigned to tailor by admin",
-            actor_role="admin",
-        ))
+        self.db.add(
+            OrderStatusHistory(
+                order_id=order.id,
+                status=OrderStatus.ASSIGNED,
+                progress_percent=15,
+                note="Assigned to tailor by admin",
+                actor_role="admin",
+            )
+        )
 
         self.db.commit()
 
@@ -142,26 +145,27 @@ class AdminService:
         )
         out = []
         for o in orders:
-            customer_name = (
-                o.customer.user.full_name if o.customer and o.customer.user else None
+            customer_name = o.customer.user.full_name if o.customer and o.customer.user else None
+            out.append(
+                PendingApproval(
+                    kind="order",
+                    id=str(o.id),
+                    name=f"Order #{str(o.id)[:8]} — {customer_name or 'Unknown'}",
+                    submitted_at=(o.placed_at or o.created_at).isoformat(),
+                    details={
+                        "action": "approve",  # tells the UI which button to show
+                        "order_status": "placed",
+                        "total_amount": float(o.total_amount),
+                        "currency": o.currency,
+                        "customer_name": customer_name,
+                        "expected_delivery_date": (
+                            o.expected_delivery_date.isoformat()
+                            if o.expected_delivery_date
+                            else None
+                        ),
+                    },
+                )
             )
-            out.append(PendingApproval(
-                kind="order",
-                id=str(o.id),
-                name=f"Order #{str(o.id)[:8]} — {customer_name or 'Unknown'}",
-                submitted_at=(o.placed_at or o.created_at).isoformat(),
-                details={
-                    "action": "approve",          # tells the UI which button to show
-                    "order_status": "placed",
-                    "total_amount": float(o.total_amount),
-                    "currency": o.currency,
-                    "customer_name": customer_name,
-                    "expected_delivery_date": (
-                        o.expected_delivery_date.isoformat()
-                        if o.expected_delivery_date else None
-                    ),
-                },
-            ))
         return out
 
     def _confirmed_orders(self) -> list[PendingApproval]:
@@ -171,8 +175,8 @@ class AdminService:
             .options(
                 joinedload(Order.customer).joinedload(CustomerProfile.user),
                 joinedload(Order.tailor_interests)
-                    .joinedload(TailorInterest.tailor)
-                    .joinedload(TailorProfile.user),
+                .joinedload(TailorInterest.tailor)
+                .joinedload(TailorProfile.user),
             )
             .filter(Order.status == OrderStatus.CONFIRMED)
             .order_by(Order.placed_at)
@@ -180,39 +184,41 @@ class AdminService:
         )
         out = []
         for o in orders:
-            customer_name = (
-                o.customer.user.full_name if o.customer and o.customer.user else None
-            )
+            customer_name = o.customer.user.full_name if o.customer and o.customer.user else None
             interests = [
                 {
                     "tailor_id": str(i.tailor_id),
-                    "tailor_name": i.tailor.user.full_name if (i.tailor and i.tailor.user) else None,
+                    "tailor_name": i.tailor.user.full_name
+                    if (i.tailor and i.tailor.user)
+                    else None,
                     "note": i.note,
                     "expected_delivery_date": (
-                        i.expected_delivery_date.isoformat()
-                        if i.expected_delivery_date else None
+                        i.expected_delivery_date.isoformat() if i.expected_delivery_date else None
                     ),
                 }
                 for i in o.tailor_interests
             ]
-            out.append(PendingApproval(
-                kind="order",
-                id=str(o.id),
-                name=f"Order #{str(o.id)[:8]} — {customer_name or 'Unknown'}",
-                submitted_at=(o.placed_at or o.created_at).isoformat(),
-                details={
-                    "action": "assign",            # tells the UI to show tailor list
-                    "order_status": "confirmed",
-                    "total_amount": float(o.total_amount),
-                    "currency": o.currency,
-                    "customer_name": customer_name,
-                    "expected_delivery_date": (
-                        o.expected_delivery_date.isoformat()
-                        if o.expected_delivery_date else None
-                    ),
-                    "interests": interests,
-                },
-            ))
+            out.append(
+                PendingApproval(
+                    kind="order",
+                    id=str(o.id),
+                    name=f"Order #{str(o.id)[:8]} — {customer_name or 'Unknown'}",
+                    submitted_at=(o.placed_at or o.created_at).isoformat(),
+                    details={
+                        "action": "assign",  # tells the UI to show tailor list
+                        "order_status": "confirmed",
+                        "total_amount": float(o.total_amount),
+                        "currency": o.currency,
+                        "customer_name": customer_name,
+                        "expected_delivery_date": (
+                            o.expected_delivery_date.isoformat()
+                            if o.expected_delivery_date
+                            else None
+                        ),
+                        "interests": interests,
+                    },
+                )
+            )
         return out
 
     def _pending_tailors(self) -> list[PendingApproval]:
@@ -322,8 +328,7 @@ class AdminService:
             currency=order.currency,
             placed_at=order.placed_at.isoformat() if order.placed_at else None,
             expected_delivery_date=(
-                order.expected_delivery_date.isoformat()
-                if order.expected_delivery_date else None
+                order.expected_delivery_date.isoformat() if order.expected_delivery_date else None
             ),
             customer_name=customer_name,
             tailor_name=tailor_name,
