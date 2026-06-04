@@ -56,9 +56,7 @@ class OtpRequest(BaseModel):
 
 
 class OtpVerify(BaseModel):
-    phone: str = Field(
-        description="Same phone number used in /otp/request"
-    )
+    phone: str = Field(description="Same phone number used in /otp/request")
     code: str = Field(min_length=4, max_length=8)
 
     @field_validator("phone", mode="before")
