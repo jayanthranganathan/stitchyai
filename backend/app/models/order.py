@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from app.models.user import CustomerProfile
 
 
-class OrderStatus(str, enum.Enum):
+class OrderStatus(enum.StrEnum):
     DRAFT = "draft"
     PLACED = "placed"
     CONFIRMED = "confirmed"

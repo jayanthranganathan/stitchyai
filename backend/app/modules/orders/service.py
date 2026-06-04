@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
@@ -12,7 +12,7 @@ from app.models.catalog import Category, Design
 from app.models.order import Order, OrderItem, OrderStatus, OrderStatusHistory
 from app.models.user import CustomerProfile
 from app.modules.orders.repository import OrdersRepository
-from app.modules.orders.schemas import OrderCreate, OrderProgress, OrderPublic, OrderItemPublic
+from app.modules.orders.schemas import OrderCreate, OrderItemPublic, OrderProgress, OrderPublic
 
 
 class OrdersService:
@@ -64,7 +64,7 @@ class OrdersService:
         order = Order(
             customer_id=customer.id,
             status=OrderStatus.PLACED,
-            placed_at=datetime.now(tz=timezone.utc),
+            placed_at=datetime.now(tz=UTC),
             expected_delivery_date=body.expected_delivery_date,
             delivery_address=delivery_address,
             notes=body.notes,

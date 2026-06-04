@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session, selectinload
@@ -39,7 +39,7 @@ class AIGenerationRepository:
             status=JobStatus.QUEUED,
             stage=GenerationStage.UPLOADING,
             progress_percent=5,
-            queued_at=datetime.now(timezone.utc),
+            queued_at=datetime.now(UTC),
         )
         self.db.add(job)
         self.db.commit()
@@ -115,9 +115,9 @@ class AIGenerationRepository:
         if inference_duration_seconds is not None:
             job.inference_duration_seconds = inference_duration_seconds
         if status == JobStatus.PROCESSING and not job.started_at:
-            job.started_at = datetime.now(timezone.utc)
+            job.started_at = datetime.now(UTC)
         if status in (JobStatus.COMPLETED, JobStatus.FAILED):
-            job.completed_at = datetime.now(timezone.utc)
+            job.completed_at = datetime.now(UTC)
         self.db.commit()
 
     def increment_retry(self, job_id: uuid.UUID) -> None:
@@ -170,7 +170,7 @@ class AIGenerationRepository:
         if not design:
             return None
         design.is_saved = save
-        design.saved_at = datetime.now(timezone.utc) if save else None
+        design.saved_at = datetime.now(UTC) if save else None
         self.db.commit()
         self.db.refresh(design)
         return design

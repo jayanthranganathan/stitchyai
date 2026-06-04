@@ -15,30 +15,28 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, timedelta, timezone
-from typing import TYPE_CHECKING
+from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import ConflictError, ForbiddenError, NotFoundError, ValidationError
-from app.models.ai_generation import AIGenerationJob, AIGeneratedDesign, JobStatus, ModerationStatus
+from app.core.config import settings
+from app.core.exceptions import ConflictError, NotFoundError, ValidationError
+from app.models.ai_generation import AIGeneratedDesign, AIGenerationJob, JobStatus, ModerationStatus
 from app.modules.ai.celery_client import enqueue_generation, enqueue_regeneration
 from app.modules.ai.repository import AIGenerationRepository
-from app.modules.ai.s3_service import S3Service, get_s3_service
+from app.modules.ai.s3_service import get_s3_service
 from app.modules.ai.schemas import (
-    DesignHistoryItem,
+    FabricAnalysisSchema,
     FabricUploadResponse,
+    GeneratedDesignPublic,
     GenerateDesignsRequest,
     GenerateDesignsResponse,
-    GeneratedDesignPublic,
     GenerationJobPublic,
     ModerationAction,
     RegenerateRequest,
     UsageAnalytics,
-    FabricAnalysisSchema,
 )
-from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -221,7 +219,7 @@ class AIGenerationService:
     # ── private helpers ─────────────────────────────────────────────────────
 
     def _enforce_rate_limit(self, user_id: uuid.UUID) -> None:
-        since = datetime.now(timezone.utc) - timedelta(hours=24)
+        since = datetime.now(UTC) - timedelta(hours=24)
         count = self.db.scalar(
             select(func.count())
             .select_from(AIGenerationJob)

@@ -2,16 +2,22 @@
 
 from __future__ import annotations
 
+import contextlib
 import uuid
-from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session, joinedload
 
 from app.core.exceptions import NotFoundError, ValidationError
 from app.models.delivery import DeliveryProfile
-from app.models.order import Order, OrderItem, OrderStatus, OrderStatusHistory
-from app.models.tailor import ApprovalState, AssignmentState, OrderAssignment, TailorInterest, TailorProfile
-from app.models.user import CustomerProfile, UserAccount
+from app.models.order import Order, OrderStatus, OrderStatusHistory
+from app.models.tailor import (
+    ApprovalState,
+    AssignmentState,
+    OrderAssignment,
+    TailorInterest,
+    TailorProfile,
+)
+from app.models.user import CustomerProfile
 from app.modules.admin.repository import AdminRepository
 from app.modules.admin.schemas import (
     AdminCreate,
@@ -41,10 +47,8 @@ class AdminService:
             )
         )
         if status:
-            try:
+            with contextlib.suppress(ValueError):
                 query = query.filter(Order.status == OrderStatus(status))
-            except ValueError:
-                pass  # unknown status — return all
         orders = query.order_by(Order.created_at.desc()).all()
         return [self._order_to_public(o) for o in orders]
 

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from app.models.user import UserAccount
 
 
-class AdminRole(str, enum.Enum):
+class AdminRole(enum.StrEnum):
     SUPER_ADMIN = "super_admin"
     OPS = "ops"
     SUPPORT = "support"

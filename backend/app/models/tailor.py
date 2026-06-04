@@ -7,7 +7,18 @@ import uuid
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import JSON, Date, DateTime, Enum, ForeignKey, Integer, Numeric, String, Table, Column
+from sqlalchemy import (
+    JSON,
+    Column,
+    Date,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Table,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -18,7 +29,7 @@ if TYPE_CHECKING:
     from app.models.user import UserAccount
 
 
-class ApprovalState(str, enum.Enum):
+class ApprovalState(enum.StrEnum):
     REGISTERED = "registered"
     DOCUMENTS_UPLOADED = "documents_uploaded"
     UNDER_REVIEW = "under_review"
@@ -27,7 +38,7 @@ class ApprovalState(str, enum.Enum):
     SUSPENDED = "suspended"
 
 
-class AssignmentState(str, enum.Enum):
+class AssignmentState(enum.StrEnum):
     PROPOSED = "proposed"
     ACCEPTED = "accepted"
     COMPLETED = "completed"

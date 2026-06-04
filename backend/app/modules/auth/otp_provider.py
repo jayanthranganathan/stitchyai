@@ -9,7 +9,6 @@ Switch:  set APP_ENV=production in .env — the factory auto-selects MSG91.
 from __future__ import annotations
 
 import logging
-import secrets
 from typing import Protocol
 
 import httpx

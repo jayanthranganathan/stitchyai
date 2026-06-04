@@ -9,8 +9,8 @@ from app.core.config import settings
 from app.core.exceptions import install_exception_handlers
 from app.core.logging import configure_logging
 from app.modules.admin.router import router as admin_router
-from app.modules.ai.router import router as ai_router
 from app.modules.ai.internal_router import router as ai_internal_router
+from app.modules.ai.router import router as ai_router
 from app.modules.auth.router import router as auth_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.delivery.router import router as delivery_router

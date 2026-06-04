@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     JSON,
+    Boolean,
     DateTime,
     Enum,
     Float,
@@ -27,7 +28,6 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
-    Boolean,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -41,14 +41,14 @@ if TYPE_CHECKING:
 # ─── enums ────────────────────────────────────────────────────────────────────
 
 
-class JobStatus(str, enum.Enum):
+class JobStatus(enum.StrEnum):
     QUEUED = "queued"
     PROCESSING = "processing"
     COMPLETED = "completed"
     FAILED = "failed"
 
 
-class GenerationStage(str, enum.Enum):
+class GenerationStage(enum.StrEnum):
     """Granular pipeline stage for real-time progress UI."""
 
     UPLOADING = "uploading"
@@ -60,14 +60,14 @@ class GenerationStage(str, enum.Enum):
     DONE = "done"
 
 
-class ModerationStatus(str, enum.Enum):
+class ModerationStatus(enum.StrEnum):
     PENDING = "pending"
     APPROVED = "approved"
     FLAGGED = "flagged"
     REMOVED = "removed"
 
 
-class FashionCategory(str, enum.Enum):
+class FashionCategory(enum.StrEnum):
     SAREE = "Saree"
     HALF_SAREE = "Half Saree"
     LEHENGA = "Lehenga"

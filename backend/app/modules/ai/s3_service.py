@@ -17,7 +17,7 @@ from __future__ import annotations
 import io
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import boto3
@@ -185,7 +185,7 @@ class S3Service:
             Body=data,
             ContentType=content_type,
             ServerSideEncryption="AES256",
-            Metadata={"uploaded_at": datetime.now(timezone.utc).isoformat()},
+            Metadata={"uploaded_at": datetime.now(UTC).isoformat()},
         )
 
     def _presign_get(self, key: str, *, expiry: int) -> str:

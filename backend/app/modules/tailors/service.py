@@ -7,9 +7,14 @@ import uuid
 from sqlalchemy.orm import Session, joinedload
 
 from app.core.exceptions import ConflictError, NotFoundError, ValidationError
-from app.models.catalog import Design
 from app.models.order import Order, OrderItem, OrderStatus
-from app.models.tailor import ApprovalState, AssignmentState, OrderAssignment, TailorInterest, TailorProfile
+from app.models.tailor import (
+    ApprovalState,
+    AssignmentState,
+    OrderAssignment,
+    TailorInterest,
+    TailorProfile,
+)
 from app.models.user import CustomerProfile
 from app.modules.tailors.repository import TailorsRepository
 from app.modules.tailors.schemas import (

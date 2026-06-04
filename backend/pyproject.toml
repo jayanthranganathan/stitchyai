@@ -60,6 +60,10 @@ select = [
 ]
 ignore = ["E501"]      # line length handled by formatter
 
+[tool.ruff.lint.per-file-ignores]
+# _LocalS3 stub mirrors boto3's API which uses PascalCase argument names
+"app/modules/ai/s3_service.py" = ["N803"]
+
 [tool.ruff.lint.isort]
 known-first-party = ["app"]
 

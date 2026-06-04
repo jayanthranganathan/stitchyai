@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from app.models.order import Order
 
 
-class PaymentStatus(str, enum.Enum):
+class PaymentStatus(enum.StrEnum):
     CREATED = "created"
     AUTHORIZED = "authorized"
     CAPTURED = "captured"

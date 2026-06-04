@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Annotated, Generic, TypeVar
+from typing import Annotated, TypeVar
 
 from fastapi import Query
 from pydantic import BaseModel, Field
@@ -26,7 +26,7 @@ def page_params(
     return PageParams(page=page, page_size=page_size)
 
 
-class Page(BaseModel, Generic[T]):
+class Page[T](BaseModel):
     items: list[T]
     page: int
     page_size: int

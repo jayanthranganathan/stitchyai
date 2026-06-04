@@ -19,21 +19,21 @@ if TYPE_CHECKING:
     from app.models.user import UserAccount
 
 
-class VehicleType(str, enum.Enum):
+class VehicleType(enum.StrEnum):
     BIKE = "bike"
     SCOOTER = "scooter"
     BICYCLE = "bicycle"
     CAR = "car"
 
 
-class DeliveryKind(str, enum.Enum):
+class DeliveryKind(enum.StrEnum):
     CUSTOMER_TO_TAILOR = "customer_to_tailor"
     TAILOR_TO_CUSTOMER = "tailor_to_customer"
     OFFICE_TO_CUSTOMER = "office_to_customer"
     CUSTOMER_TO_OFFICE = "customer_to_office"
 
 
-class DeliveryAssignmentState(str, enum.Enum):
+class DeliveryAssignmentState(enum.StrEnum):
     PROPOSED = "proposed"
     ACCEPTED = "accepted"
     PICKED_UP = "picked_up"

@@ -13,7 +13,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.shared.base_model import Base, TimestampMixin, UUIDPrimaryKeyMixin
 
 
-class DevicePlatform(str, enum.Enum):
+class DevicePlatform(enum.StrEnum):
     IOS = "ios"
     ANDROID = "android"
     WEB = "web"
