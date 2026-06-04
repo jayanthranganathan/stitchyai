@@ -218,9 +218,12 @@ class S3Service:
             raise ValidationError(f"Corrupted or invalid image: {exc}") from exc
 
 
+_s3_singleton: S3Service | None = None
+
+
 def get_s3_service() -> S3Service:
-    """FastAPI dependency factory (cached singleton per process)."""
+    """FastAPI dependency factory — lazily created on first request."""
+    global _s3_singleton
+    if _s3_singleton is None:
+        _s3_singleton = S3Service()
     return _s3_singleton
-
-
-_s3_singleton = S3Service()
