@@ -1,14 +1,18 @@
+import Constants from 'expo-constants';
 import { useState } from 'react';
 import { Text } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { ScreenContainer } from '@/components/ScreenContainer';
+import { startPhoneVerification } from '@/lib/firebasePhone';
 import { useAuthStore } from '@/store/authStore';
 import { spacing, typography, useThemedStyles } from '@/theme';
 import { validators } from '@/utils/validators';
 
 import type { AuthScreenProps } from '@/navigation/types';
+
+const USE_FIREBASE = Boolean(Constants.expoConfig?.extra?.useFirebaseAuth);
 
 export function PhoneLoginScreen({ navigation }: AuthScreenProps<'PhoneLogin'>) {
   const requestOtp = useAuthStore((s) => s.requestOtp);
@@ -34,11 +38,24 @@ export function PhoneLoginScreen({ navigation }: AuthScreenProps<'PhoneLogin'>) 
     }
     setError(null);
     setLoading(true);
+
+    // ── Production path: Firebase phone auth (Google sends the SMS) ──
+    if (USE_FIREBASE) {
+      try {
+        await startPhoneVerification(phone);
+        setLoading(false);
+        navigation.navigate('OtpVerify', { phone, firebase: true });
+      } catch {
+        setError('Could not send OTP. Check the number and try again.');
+        setLoading(false);
+      }
+      return;
+    }
+
+    // ── Dev path: backend InMemory OTP (code 123456), no real SMS ──
     try {
       await requestOtp(phone);
     } catch {
-      // In dev the backend InMemory provider accepts 123456 for any number,
-      // so navigate anyway. A real send failure in production blocks here.
       if (!__DEV__) {
         setError('Could not send OTP. Try again.');
         setLoading(false);

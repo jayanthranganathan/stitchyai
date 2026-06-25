@@ -17,12 +17,16 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'in.thugildesigners.mobile',
+    // From Firebase console → iOS app. Override path via GOOGLE_SERVICES_PLIST.
+    googleServicesFile: process.env.GOOGLE_SERVICES_PLIST ?? './GoogleService-Info.plist',
     config: {
       googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_KEY,
     },
   },
   android: {
     package: 'in.thugildesigners.mobile',
+    // From Firebase console → Android app. Override path via GOOGLE_SERVICES_JSON.
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#FFFFFF',
@@ -36,18 +40,23 @@ const config: ExpoConfig = {
   extra: {
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://thugil-api-production.up.railway.app/',
     razorpayKeyId: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID ?? '',
-    firebase: {
-      apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY ?? '',
-      authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? '',
-      projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? '',
-      appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID ?? '',
-    },
+    // Turn on real Firebase phone OTP (native). Leave false for the dev OTP
+    // flow (code 123456) on simulators / Expo Go.
+    useFirebaseAuth: process.env.EXPO_PUBLIC_USE_FIREBASE_AUTH === 'true',
     eas: {
       projectId: "9cd99483-419e-4cd4-bdd9-46e4557f2790"
     }
   },
   plugins: [
     'expo-secure-store',
+    '@react-native-firebase/app',
+    [
+      'expo-build-properties',
+      {
+        // @react-native-firebase requires static frameworks on iOS
+        ios: { useFrameworks: 'static' },
+      },
+    ],
     [
       'expo-location',
       {

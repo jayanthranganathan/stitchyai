@@ -35,3 +35,7 @@ web-build/
 # Builds / native
 ios/
 android/
+
+# Firebase config (contains project keys)
+google-services.json
+GoogleService-Info.plist
