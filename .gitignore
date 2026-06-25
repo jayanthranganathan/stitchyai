@@ -36,6 +36,6 @@ web-build/
 ios/
 android/
 
-# Firebase config (contains project keys)
-google-services.json
-GoogleService-Info.plist
+# Firebase config — committed so EAS Build can upload it.
+# google-services.json is safe to commit: its API key is restricted by
+# package name + SHA fingerprints and ships inside the APK anyway.
