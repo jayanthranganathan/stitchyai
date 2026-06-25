@@ -38,7 +38,7 @@ const config: ExpoConfig = {
     },
   },
   extra: {
-    apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://thugil-api-production.up.railway.app/',
+    apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://thugil-api-production.up.railway.app/v1/',
     razorpayKeyId: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID ?? '',
     // Turn on real Firebase phone OTP (native). Leave false for the dev OTP
     // flow (code 123456) on simulators / Expo Go.
