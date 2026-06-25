@@ -32,14 +32,34 @@ def _ensure_initialised() -> None:
     with _lock:
         if _initialised:
             return
-        if not settings.firebase_credentials_json.strip():
+        raw = settings.firebase_credentials_json.strip()
+        if not raw:
             raise UnauthorizedError(
                 "Firebase auth is not configured (FIREBASE_CREDENTIALS_JSON is empty)."
             )
+        # Tolerate a value accidentally wrapped in single/double quotes — a very
+        # common mistake when pasting the service-account JSON into a host's env
+        # variable UI.
+        if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in ("'", '"'):
+            raw = raw[1:-1].strip()
+
         import firebase_admin
         from firebase_admin import credentials
 
-        cred_dict: dict[str, Any] = json.loads(settings.firebase_credentials_json)
+        try:
+            cred_dict: dict[str, Any] = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            # Don't leak the secret — log only length + first char for diagnosis.
+            logger.error(
+                "[Firebase] FIREBASE_CREDENTIALS_JSON is not valid JSON "
+                "(length=%d, starts with %r). Paste the raw service-account JSON "
+                "(starting with '{'), not a path or quoted string.",
+                len(raw),
+                raw[:1],
+            )
+            raise UnauthorizedError(
+                "Firebase credentials are misconfigured on the server."
+            ) from exc
         cred = credentials.Certificate(cred_dict)
         # Guard against double-init if another import path already did it
         if not firebase_admin._apps:
