@@ -20,6 +20,7 @@ class Address(BaseModel):
 class UserUpdate(BaseModel):
     full_name: str | None = None
     email: EmailStr | None = None
+    addresses: list[Address] | None = None
 
 
 class UserMe(BaseModel):

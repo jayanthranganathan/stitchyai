@@ -1,12 +1,9 @@
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Text } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { ScreenContainer } from '@/components/ScreenContainer';
-import { getFirebaseApp, isFirebaseConfigured } from '@/lib/firebase';
-import { startPhoneVerification } from '@/lib/firebasePhone';
 import { useAuthStore } from '@/store/authStore';
 import { spacing, typography, useThemedStyles } from '@/theme';
 import { validators } from '@/utils/validators';
@@ -18,7 +15,6 @@ export function PhoneLoginScreen({ navigation }: AuthScreenProps<'PhoneLogin'>) 
   const [phone, setPhone] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const recaptchaRef = useRef<FirebaseRecaptchaVerifierModal>(null);
 
   const styles = useThemedStyles((c) => ({
     title: { ...typography.h1, color: c.text, marginBottom: spacing.xs },
@@ -38,25 +34,11 @@ export function PhoneLoginScreen({ navigation }: AuthScreenProps<'PhoneLogin'>) 
     }
     setError(null);
     setLoading(true);
-
-    // ── Production path: Firebase phone auth (Google sends the SMS) ──
-    if (isFirebaseConfigured && recaptchaRef.current) {
-      try {
-        await startPhoneVerification(phone, recaptchaRef.current);
-        setLoading(false);
-        navigation.navigate('OtpVerify', { phone, firebase: true });
-        return;
-      } catch {
-        setError('Could not send OTP. Check the number and try again.');
-        setLoading(false);
-        return;
-      }
-    }
-
-    // ── Dev path: backend InMemory OTP (code 123456) ──
     try {
       await requestOtp(phone);
     } catch {
+      // In dev the backend InMemory provider accepts 123456 for any number,
+      // so navigate anyway. A real send failure in production blocks here.
       if (!__DEV__) {
         setError('Could not send OTP. Try again.');
         setLoading(false);
@@ -69,12 +51,6 @@ export function PhoneLoginScreen({ navigation }: AuthScreenProps<'PhoneLogin'>) 
 
   return (
     <ScreenContainer>
-      {isFirebaseConfigured ? (
-        <FirebaseRecaptchaVerifierModal
-          ref={recaptchaRef}
-          firebaseConfig={getFirebaseApp().options}
-        />
-      ) : null}
       <Text style={styles.title}>Sign in with Phone</Text>
       <Text style={styles.subtitle}>We'll send a one-time password to verify your number.</Text>
       <Input

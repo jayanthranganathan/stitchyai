@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 import { apiClient } from '@/api/client';
 import { endpoints } from '@/api/endpoints';
-import type { Role, TokenPair, User } from '@/types';
+import type { ProfileUpdate, Role, TokenPair, User } from '@/types';
 import { storage } from '@/utils/storage';
 
 type AuthState = {
@@ -13,6 +13,7 @@ type AuthState = {
   requestOtp: (phone: string) => Promise<void>;
   verifyOtp: (phone: string, code: string) => Promise<void>;
   firebaseLogin: (idToken: string) => Promise<void>;
+  updateProfile: (patch: ProfileUpdate) => Promise<void>;
   setActiveRole: (role: Role) => Promise<void>;
   continueAsGuest: () => void;
   logout: () => Promise<void>;
@@ -70,6 +71,11 @@ export const useAuthStore = create<AuthState>((set, _get) => ({
     const role = data.user.roles[0] ?? null;
     if (role) await storage.set('activeRole', role);
     set({ user: data.user, activeRole: role, status: 'authenticated' });
+  },
+
+  async updateProfile(patch) {
+    const { data } = await apiClient.patch<User>(endpoints.users.me, patch);
+    set({ user: data });
   },
 
   async setActiveRole(role) {

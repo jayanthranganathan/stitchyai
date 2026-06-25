@@ -10,6 +10,7 @@ import { HomeScreen } from '@/features/customer/screens/HomeScreen';
 import { OrderTrackScreen } from '@/features/customer/screens/OrderTrackScreen';
 import { OrdersScreen } from '@/features/customer/screens/OrdersScreen';
 import { ProfileScreen } from '@/features/customer/screens/ProfileScreen';
+import { EditProfileScreen } from '@/features/customer/screens/EditProfileScreen';
 import { SubscriptionScreen } from '@/features/customer/screens/SubscriptionScreen';
 import { CreditsScreen } from '@/features/customer/screens/CreditsScreen';
 import { ThemePickerScreen } from '@/features/customer/screens/ThemePickerScreen';
@@ -47,6 +48,7 @@ export function CustomerNavigator() {
       <Stack.Screen name="OrderTrack" component={OrderTrackScreen} options={{ title: 'Track order' }} />
       <Stack.Screen name="DeliveryMap" component={DeliveryMapScreen} options={{ title: 'Delivery' }} />
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Edit profile' }} />
       <Stack.Screen name="Subscription" component={SubscriptionScreen} options={{ title: 'Plans' }} />
       <Stack.Screen name="Credits" component={CreditsScreen} options={{ title: 'Credits' }} />
       <Stack.Screen name="ThemePicker" component={ThemePickerScreen} options={{ title: 'Appearance' }} />

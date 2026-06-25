@@ -27,6 +27,7 @@ export type CustomerStackParamList = {
   OrderTrack: { orderId: string };
   DeliveryMap: { orderId: string };
   Profile: undefined;
+  EditProfile: undefined;
   ThemePicker: undefined;
   Subscription: { upsell?: string } | undefined;
   Credits: undefined;
