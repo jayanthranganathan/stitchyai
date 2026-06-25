@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "492777137764",
+    "project_id": "stitch-2385f",
+    "storage_bucket": "stitch-2385f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:492777137764:android:5e62052e94512cffa36171",
+        "android_client_info": {
+          "package_name": "in.thugildesigners.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrL6tYFip71K7nOn30q2_TtyFWhC20ULE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
