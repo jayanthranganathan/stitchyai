@@ -12,6 +12,7 @@ type AuthState = {
   hydrate: () => Promise<void>;
   requestOtp: (phone: string) => Promise<void>;
   verifyOtp: (phone: string, code: string) => Promise<void>;
+  firebaseLogin: (idToken: string) => Promise<void>;
   setActiveRole: (role: Role) => Promise<void>;
   continueAsGuest: () => void;
   logout: () => Promise<void>;
@@ -49,6 +50,20 @@ export const useAuthStore = create<AuthState>((set, _get) => ({
     const { data } = await apiClient.post<{ user: User; tokens: TokenPair }>(
       endpoints.auth.verifyOtp,
       { phone, code },
+    );
+    await storage.set('accessToken', data.tokens.access);
+    await storage.set('refreshToken', data.tokens.refresh);
+    const role = data.user.roles[0] ?? null;
+    if (role) await storage.set('activeRole', role);
+    set({ user: data.user, activeRole: role, status: 'authenticated' });
+  },
+
+  async firebaseLogin(idToken) {
+    // Exchange a verified Firebase ID token for our own JWT pair.
+    set({ status: 'loading' });
+    const { data } = await apiClient.post<{ user: User; tokens: TokenPair }>(
+      endpoints.auth.firebase,
+      { id_token: idToken },
     );
     await storage.set('accessToken', data.tokens.access);
     await storage.set('refreshToken', data.tokens.refresh);

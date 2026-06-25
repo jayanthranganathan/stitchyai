@@ -15,14 +15,16 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.core.exceptions import ConflictError, NotFoundError, ValidationError
+from app.core.exceptions import ConflictError, ForbiddenError, NotFoundError, ValidationError
+from app.core.plans import get_caps
 from app.models.ai_generation import AIGeneratedDesign, AIGenerationJob, JobStatus, ModerationStatus
+from app.models.user import CustomerProfile
 from app.modules.ai.celery_client import enqueue_generation, enqueue_regeneration
 from app.modules.ai.repository import AIGenerationRepository
 from app.modules.ai.s3_service import get_s3_service
@@ -40,8 +42,6 @@ from app.modules.ai.schemas import (
 
 logger = logging.getLogger(__name__)
 
-# Rate limit: max 10 generation jobs per user per 24 hours
-RATE_LIMIT_JOBS_PER_DAY = 10
 # Average GPU generation time (seconds) — used for ETA estimate
 AVG_GENERATION_SECONDS = 45
 
@@ -65,7 +65,7 @@ class AIGenerationService:
         self, user_id: uuid.UUID, body: GenerateDesignsRequest
     ) -> GenerateDesignsResponse:
         """Create a job, enqueue to Celery, return job_id + queue position."""
-        self._enforce_rate_limit(user_id)
+        self._enforce_plan_and_quota(user_id)
         self._validate_category(body.category)
 
         job = self.repo.create_job(
@@ -124,7 +124,7 @@ class AIGenerationService:
         original = self.repo.get_job_for_user(uuid.UUID(body.job_id), user_id)
         if not original:
             raise NotFoundError("Original generation job not found")
-        self._enforce_rate_limit(user_id)
+        self._enforce_plan_and_quota(user_id)
 
         # Create a new job inheriting the original's fabric and category
         new_job = self.repo.create_job(
@@ -218,23 +218,42 @@ class AIGenerationService:
 
     # ── private helpers ─────────────────────────────────────────────────────
 
-    def _enforce_rate_limit(self, user_id: uuid.UUID) -> None:
-        since = datetime.now(UTC) - timedelta(hours=24)
+    def _enforce_plan_and_quota(self, user_id: uuid.UUID) -> None:
+        """Gate AI generation by the customer's subscription tier.
+
+        Standard tier has no AI access. Gold/Platinum get a monthly quota
+        (Platinum unlimited). Quota resets at the start of each calendar month.
+        """
+        customer = self.db.query(CustomerProfile).filter(CustomerProfile.user_id == user_id).first()
+        if customer is None:
+            raise NotFoundError("Customer profile not found for this account")
+
+        caps = get_caps(customer.plan_tier)
+        if not caps.ai_enabled:
+            raise ForbiddenError(
+                "AI fabric design is a Gold and Platinum feature. "
+                "Upgrade your plan to generate designs."
+            )
+
+        if caps.ai_monthly_quota is None:
+            return  # unlimited
+
+        month_start = datetime.now(UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         count = (
             self.db.scalar(
                 select(func.count())
                 .select_from(AIGenerationJob)
                 .where(
                     AIGenerationJob.user_id == user_id,
-                    AIGenerationJob.created_at >= since,
+                    AIGenerationJob.created_at >= month_start,
                 )
             )
             or 0
         )
-        if count >= RATE_LIMIT_JOBS_PER_DAY:
+        if count >= caps.ai_monthly_quota:
             raise ConflictError(
-                f"Daily generation limit reached ({RATE_LIMIT_JOBS_PER_DAY} per 24 h). "
-                "Please try again tomorrow."
+                f"Monthly AI limit reached ({caps.ai_monthly_quota} for {caps.label}). "
+                "Upgrade to Platinum for unlimited generations."
             )
 
     @staticmethod

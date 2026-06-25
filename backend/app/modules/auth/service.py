@@ -24,7 +24,14 @@ class AuthService:
     def verify_and_login(self, phone: str, code: str) -> AuthResult:
         if not self.otp.verify(phone, code):
             raise UnauthorizedError("Invalid OTP")
+        return self.login_with_verified_phone(phone)
 
+    def login_with_verified_phone(self, phone: str) -> AuthResult:
+        """Find-or-create the user for an already-verified phone, issue JWTs.
+
+        Used by both the OTP flow and the Firebase phone-auth flow — the phone
+        is trusted by the time we reach here.
+        """
         user = self.repo.find_by_phone(phone) or self.repo.create(phone)
         roles = self._derive_roles(user)
         return AuthResult(

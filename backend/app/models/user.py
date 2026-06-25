@@ -3,16 +3,20 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
+from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import JSON, Boolean, ForeignKey, String
+from sqlalchemy import JSON, Boolean, DateTime, Enum, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.core.plans import PlanTier
 from app.shared.base_model import Base, TimestampMixin, UUIDPrimaryKeyMixin
 
 if TYPE_CHECKING:
     from app.models.admin import AdminProfile
+    from app.models.credit import CreditTransaction
     from app.models.delivery import DeliveryProfile
     from app.models.order import Order
     from app.models.tailor import TailorProfile
@@ -50,5 +54,18 @@ class CustomerProfile(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     addresses: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
     preferences: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
 
+    # ── Subscription + credits ──────────────────────────────────────────────
+    plan_tier: Mapped[PlanTier] = mapped_column(
+        Enum(PlanTier, values_callable=lambda x: [e.value for e in x]),
+        default=PlanTier.STANDARD,
+        nullable=False,
+        index=True,
+    )
+    plan_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    credit_balance: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=0, nullable=False)
+
     user: Mapped[UserAccount] = relationship(back_populates="customer_profile")
     orders: Mapped[list[Order]] = relationship(back_populates="customer")
+    credit_transactions: Mapped[list[CreditTransaction]] = relationship(
+        back_populates="customer", cascade="all, delete-orphan"
+    )

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuthStore } from '@/store/authStore';
 import { useMyOrders } from '@/features/customer/hooks/useCustomerQueries';
+import { useMySubscription } from '@/features/customer/hooks/useBilling';
 import { BottomNavBar } from '@/components/BottomNavBar';
 import { spacing, useTheme } from '@/theme';
 import { formatters } from '@/utils/formatters';
@@ -20,6 +21,17 @@ export function HomeScreen({ navigation }: CustomerScreenProps<'Home'>) {
   const { colors } = useTheme();
   const user = useAuthStore((s) => s.user);
   const { data: orders } = useMyOrders();
+  const { data: subscription } = useMySubscription();
+
+  function openAIStudio() {
+    if (subscription && !subscription.ai_enabled) {
+      navigation.navigate('Subscription', {
+        upsell: 'AI fabric design is a Gold & Platinum feature. Upgrade to start generating designs from your fabric.',
+      });
+      return;
+    }
+    navigation.navigate('AIFabricUpload');
+  }
 
   const firstName = user?.full_name?.split(' ')[0] ?? 'there';
   const activeOrders = orders?.filter((o) => !['delivered', 'cancelled'].includes(o.status)) ?? [];
@@ -109,7 +121,7 @@ export function HomeScreen({ navigation }: CustomerScreenProps<'Home'>) {
             </Pressable>
 
             {/* ✦ AI Design Studio card */}
-            <Pressable onPress={() => navigation.navigate('AIFabricUpload')}>
+            <Pressable onPress={openAIStudio}>
               <LinearGradient
                 colors={['#4C1D95', '#7C3AED']}
                 start={{ x: 0, y: 0 }}

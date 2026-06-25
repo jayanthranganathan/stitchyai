@@ -13,11 +13,13 @@ from app.modules.ai.internal_router import router as ai_internal_router
 from app.modules.ai.router import router as ai_router
 from app.modules.auth.router import router as auth_router
 from app.modules.catalog.router import router as catalog_router
+from app.modules.credits.router import router as credits_router
 from app.modules.delivery.router import router as delivery_router
 from app.modules.notifications.router import router as notifications_router
 from app.modules.orders.router import router as orders_router
 from app.modules.payments.router import router as payments_router
 from app.modules.reports.router import router as reports_router
+from app.modules.subscriptions.router import router as subscriptions_router
 from app.modules.tailors.router import router as tailors_router
 from app.modules.tracking.router import router as tracking_router
 from app.modules.users.router import router as users_router
@@ -59,6 +61,8 @@ def create_app() -> FastAPI:
         tracking_router,
         notifications_router,
         reports_router,
+        subscriptions_router,  # ← plan tiers + upgrades
+        credits_router,  # ← credit balance + history
         ai_router,  # ← AI generation endpoints (public, JWT required)
         ai_internal_router,  # ← AI worker callbacks (service-key required)
     ):

@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
+from decimal import Decimal
 
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import NotFoundError
 from app.models.catalog import Category, Design
+from app.models.credit import CreditKind
 from app.models.order import Order, OrderItem, OrderStatus, OrderStatusHistory
 from app.models.user import CustomerProfile
+from app.modules.credits.service import CreditsService
 from app.modules.orders.repository import OrdersRepository
 from app.modules.orders.schemas import OrderCreate, OrderItemPublic, OrderProgress, OrderPublic
 
@@ -43,7 +46,17 @@ class OrdersService:
         if not delivery_address and customer.addresses:
             delivery_address = customer.addresses[0]
 
-        # ── 5. Build order ────────────────────────────────────────────────────
+        # ── 5. Apply credit redemption (1 credit = ₹1), capped at balance & total ──
+        redeem = Decimal(0)
+        if body.credits_to_redeem > 0:
+            redeem = min(
+                Decimal(body.credits_to_redeem),
+                Decimal(customer.credit_balance),
+                Decimal(str(subtotal)),
+            )
+        total_after = Decimal(str(subtotal)) - redeem
+
+        # ── 6. Build order ────────────────────────────────────────────────────
         item = OrderItem(
             category_id=category.id,
             design_id=uuid.UUID(body.design_id) if body.design_id else None,
@@ -60,7 +73,8 @@ class OrdersService:
             expected_delivery_date=body.expected_delivery_date,
             delivery_address=delivery_address,
             notes=body.notes,
-            total_amount=subtotal,
+            total_amount=total_after,
+            credits_redeemed=redeem,
             items=[item],
         )
         order.history.append(
@@ -71,8 +85,49 @@ class OrdersService:
                 note="Order placed",
             )
         )
-        self.repo.save(order)
+
+        # ── 7. Persist order + ledger in one transaction ───────────────────────
+        self.db.add(order)
+        self.db.flush()  # assign order.id before writing the credit ledger entry
+        if redeem > 0:
+            CreditsService(self.db).redeem(
+                customer,
+                redeem,
+                CreditKind.REDEEM_ORDER,
+                reference_id=order.id,
+                note=f"Redeemed on order {str(order.id)[:8]}",
+            )
+        self.db.commit()
+        self.db.refresh(order)
         # TODO: publish OrderPlaced event → notify tailors with matching expertise
+        return self._to_public(order)
+
+    def mark_delivered(self, order_id: uuid.UUID, actor_role: str = "delivery") -> OrderPublic:
+        """Transition an order to DELIVERED and award earn-credits to the customer.
+
+        This is the single hook that grants order-completion credits. Wire any
+        delivery/admin "mark delivered" action through here.
+        """
+        order = self.repo.get(order_id)
+        if not order:
+            raise NotFoundError("Order not found")
+        if order.status == OrderStatus.DELIVERED:
+            return self._to_public(order)
+
+        order.status = OrderStatus.DELIVERED
+        order.progress_percent = 100
+        order.history.append(
+            OrderStatusHistory(
+                status=OrderStatus.DELIVERED,
+                progress_percent=100,
+                actor_role=actor_role,
+                note="Order delivered",
+            )
+        )
+        # Award completion credits based on the customer's plan earn rate
+        CreditsService(self.db).award_for_delivered_order(order)
+        self.db.commit()
+        self.db.refresh(order)
         return self._to_public(order)
 
     def _resolve_customer(self, user_id: uuid.UUID) -> CustomerProfile:
@@ -114,21 +169,44 @@ class OrdersService:
         )
 
     @staticmethod
-    def _to_public(order: Order) -> OrderPublic:
+    def _item_image(item: OrderItem) -> str | None:
+        """First available cloth image: library design image, else proposal reference."""
+        if item.design and item.design.images:
+            return item.design.images[0]
+        if item.proposal and item.proposal.reference_images:
+            return item.proposal.reference_images[0]
+        return None
+
+    def _to_public(self, order: Order) -> OrderPublic:
+        # Resolve category names once (orders usually have a single item)
+        cat_ids = {i.category_id for i in order.items}
+        cat_names: dict[uuid.UUID, str] = {}
+        if cat_ids:
+            for cat in self.db.query(Category).filter(Category.id.in_(cat_ids)).all():
+                cat_names[cat.id] = cat.name
+
+        payment = order.payment
         return OrderPublic(
             id=str(order.id),
             status=order.status.value,
             placed_at=order.placed_at.isoformat() if order.placed_at else None,
             expected_delivery_date=order.expected_delivery_date,
             total_amount=float(order.total_amount),
+            credits_redeemed=float(order.credits_redeemed),
             currency=order.currency,
             progress_percent=order.progress_percent,
+            notes=order.notes,
+            payment_status=payment.status.value if payment else None,
+            payment_provider=payment.provider if payment else None,
             items=[
                 OrderItemPublic(
                     id=str(i.id),
                     category_id=str(i.category_id),
+                    category_name=cat_names.get(i.category_id),
                     design_id=str(i.design_id) if i.design_id else None,
+                    design_name=i.design.name if i.design else None,
                     proposal_id=str(i.proposal_id) if i.proposal_id else None,
+                    image_url=self._item_image(i),
                     quantity=i.quantity,
                     unit_price=float(i.unit_price),
                     subtotal=float(i.subtotal),

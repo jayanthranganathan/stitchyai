@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     msg91_template_id: str = ""
     msg91_sender_id: str = "THUGIL"
 
+    # --- Firebase phone auth (no GST/DLT needed) ---
+    # Service-account JSON as a single-line string. Empty = Firebase auth disabled.
+    firebase_credentials_json: str = ""
+
     # --- Razorpay ---
     razorpay_key_id: str = ""
     razorpay_key_secret: str = ""

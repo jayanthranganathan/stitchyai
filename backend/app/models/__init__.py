@@ -5,6 +5,7 @@ Alembic relies on this for autogenerate.
 
 from app.models.admin import AdminProfile
 from app.models.catalog import Category, Design, DesignProposal
+from app.models.credit import CreditTransaction
 from app.models.delivery import DeliveryAssignment, DeliveryProfile, LocationPing
 from app.models.notification import FcmToken, Notification
 from app.models.order import Order, OrderItem, OrderStatusHistory
@@ -15,6 +16,7 @@ from app.models.user import CustomerProfile, UserAccount
 __all__ = [
     "AdminProfile",
     "Category",
+    "CreditTransaction",
     "CustomerProfile",
     "DeliveryAssignment",
     "DeliveryProfile",

@@ -6,6 +6,14 @@ export const formatters = {
     const d = typeof iso === 'string' ? new Date(iso) : iso;
     return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   },
+  time(iso: string | Date): string {
+    const d = typeof iso === 'string' ? new Date(iso) : iso;
+    return d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+  },
+  dateTime(iso: string | Date): string {
+    const d = typeof iso === 'string' ? new Date(iso) : iso;
+    return `${d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} · ${d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
+  },
   relativeDays(iso: string | Date): string {
     const d = typeof iso === 'string' ? new Date(iso) : iso;
     const days = Math.round((d.getTime() - Date.now()) / 86_400_000);

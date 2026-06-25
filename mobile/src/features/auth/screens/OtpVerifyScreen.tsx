@@ -4,6 +4,7 @@ import { Text, TouchableOpacity } from 'react-native';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { ScreenContainer } from '@/components/ScreenContainer';
+import { confirmPhoneCode } from '@/lib/firebasePhone';
 import { useAuthStore } from '@/store/authStore';
 import { radii, spacing, typography, useThemedStyles } from '@/theme';
 import { validators } from '@/utils/validators';
@@ -13,8 +14,9 @@ import type { AuthScreenProps } from '@/navigation/types';
 const DEV_OTP = '123456';
 
 export function OtpVerifyScreen({ route }: AuthScreenProps<'OtpVerify'>) {
-  const { phone } = route.params;
+  const { phone, firebase } = route.params;
   const verifyOtp = useAuthStore((s) => s.verifyOtp);
+  const firebaseLogin = useAuthStore((s) => s.firebaseLogin);
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,7 +48,12 @@ export function OtpVerifyScreen({ route }: AuthScreenProps<'OtpVerify'>) {
     setError(null);
     setLoading(true);
     try {
-      await verifyOtp(phone, code);
+      if (firebase) {
+        const idToken = await confirmPhoneCode(code);
+        await firebaseLogin(idToken);
+      } else {
+        await verifyOtp(phone, code);
+      }
       // RootNavigator switches to the role's stack automatically.
     } catch {
       setError('Invalid code. Try again or resend.');

@@ -94,3 +94,7 @@ class AuthResult(BaseModel):
 
 class RefreshRequest(BaseModel):
     refresh: str
+
+
+class FirebaseLogin(BaseModel):
+    id_token: str

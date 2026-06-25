@@ -84,6 +84,20 @@ CREATE TYPE adminrole AS ENUM (
     'support'
 );
 
+CREATE TYPE plantier AS ENUM (
+    'standard',
+    'gold',
+    'platinum'
+);
+
+CREATE TYPE creditkind AS ENUM (
+    'earn_order',
+    'redeem_order',
+    'redeem_upgrade',
+    'promo',
+    'refund'
+);
+
 
 -- =============================================================================
 -- TABLE 1 — user_accounts
@@ -110,15 +124,19 @@ CREATE INDEX ix_user_accounts_email ON user_accounts (email);
 -- addresses stores a JSON array of saved delivery addresses.
 -- =============================================================================
 CREATE TABLE customer_profiles (
-    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id      UUID NOT NULL UNIQUE REFERENCES user_accounts (id) ON DELETE CASCADE,
-    addresses    JSONB NOT NULL DEFAULT '[]',
-    preferences  JSONB NOT NULL DEFAULT '{}',
-    created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id         UUID NOT NULL UNIQUE REFERENCES user_accounts (id) ON DELETE CASCADE,
+    addresses       JSONB NOT NULL DEFAULT '[]',
+    preferences     JSONB NOT NULL DEFAULT '{}',
+    plan_tier       plantier NOT NULL DEFAULT 'standard',
+    plan_expires_at TIMESTAMPTZ,
+    credit_balance  NUMERIC(12, 2) NOT NULL DEFAULT 0,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX ix_customer_profiles_user_id ON customer_profiles (user_id);
+CREATE INDEX ix_customer_profiles_user_id   ON customer_profiles (user_id);
+CREATE INDEX ix_customer_profiles_plan_tier ON customer_profiles (plan_tier);
 
 
 -- =============================================================================
@@ -285,6 +303,7 @@ CREATE TABLE orders (
     placed_at              TIMESTAMPTZ,
     delivery_address       JSONB       NOT NULL DEFAULT '{}',
     total_amount           NUMERIC(12, 2) NOT NULL DEFAULT 0,
+    credits_redeemed       NUMERIC(12, 2) NOT NULL DEFAULT 0,
     currency               VARCHAR(3)  NOT NULL DEFAULT 'INR',
     progress_percent       INT         NOT NULL DEFAULT 0,
     notes                  VARCHAR(2000),
@@ -490,6 +509,27 @@ CREATE TABLE notifications (
 
 CREATE INDEX ix_notifications_user_account_id ON notifications (user_account_id);
 CREATE INDEX ix_notifications_kind            ON notifications (kind);
+
+
+-- =============================================================================
+-- TABLE 21 — credit_transactions
+-- Append-only ledger of credit earn/spend. Running balance is denormalised
+-- onto customer_profiles.credit_balance; this table is the audit trail.
+-- =============================================================================
+CREATE TABLE credit_transactions (
+    id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_id   UUID        NOT NULL REFERENCES customer_profiles (id) ON DELETE CASCADE,
+    amount        NUMERIC(12, 2) NOT NULL,   -- signed: + earned, - spent
+    kind          creditkind  NOT NULL,
+    balance_after NUMERIC(12, 2) NOT NULL,
+    reference_id  UUID,                       -- e.g. the related order id
+    note          VARCHAR(255),
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX ix_credit_transactions_customer_id ON credit_transactions (customer_id);
+CREATE INDEX ix_credit_transactions_created_at  ON credit_transactions (created_at);
 
 
 -- =============================================================================

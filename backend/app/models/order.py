@@ -51,6 +51,7 @@ class Order(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     placed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     delivery_address: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     total_amount: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
+    credits_redeemed: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
     currency: Mapped[str] = mapped_column(String(3), default="INR")
     progress_percent: Mapped[int] = mapped_column(Integer, default=0)
     notes: Mapped[str | None] = mapped_column(String(2000), nullable=True)

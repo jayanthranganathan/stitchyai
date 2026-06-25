@@ -4,7 +4,7 @@ export type AuthStackParamList = {
   Landing: undefined;
   PhoneLogin: undefined;
   EmailLogin: undefined;
-  OtpVerify: { phone: string };
+  OtpVerify: { phone: string; firebase?: boolean };
   RoleSelect: undefined;
   CustomerRegister: undefined;
   TailorRegister: undefined;
@@ -16,12 +16,20 @@ export type CustomerStackParamList = {
   Categories: undefined;
   FabricScan: undefined;
   Designs: { categorySlug: string; categoryName: string };
-  CreateOrder: { designId?: string; categorySlug?: string };
+  CreateOrder: {
+    designId?: string;
+    categorySlug?: string;
+    designName?: string;
+    designImage?: string;
+    basePrice?: number;
+  };
   Orders: undefined;
   OrderTrack: { orderId: string };
   DeliveryMap: { orderId: string };
   Profile: undefined;
   ThemePicker: undefined;
+  Subscription: { upsell?: string } | undefined;
+  Credits: undefined;
   // ── AI Design Studio ──────────────────────────────────────────────────────
   AIFabricUpload: undefined;
   AICategorySelect: undefined;

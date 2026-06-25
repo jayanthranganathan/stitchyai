@@ -175,12 +175,23 @@ class Msg91OtpProvider:
 # ── Factory ───────────────────────────────────────────────────────────────────
 
 
+# Cache the provider for the process lifetime. This is essential for the
+# InMemory provider: it stores issued codes in-process, so /otp/request and
+# /otp/verify MUST hit the same instance — otherwise verify sees an empty store
+# and every login fails with 401.
+_provider: OtpProvider | None = None
+
+
 def get_otp_provider() -> OtpProvider:
-    """Return the right provider based on APP_ENV.
+    """Return the right provider based on APP_ENV (cached per process).
 
     development / test  →  InMemoryOtpProvider (OTP = 123456, no SMS sent)
     production          →  Msg91OtpProvider    (real SMS via MSG91)
     """
+    global _provider
+    if _provider is not None:
+        return _provider
+
     env = (
         settings.app_env.strip().lower()
     )  # strip + lowercase — catches "Production", " production"
@@ -190,6 +201,5 @@ def get_otp_provider() -> OtpProvider:
         "MSG91" if env == "production" else "InMemory",
     )
 
-    if env == "production":
-        return Msg91OtpProvider()
-    return InMemoryOtpProvider()
+    _provider = Msg91OtpProvider() if env == "production" else InMemoryOtpProvider()
+    return _provider

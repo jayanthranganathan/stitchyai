@@ -27,6 +27,8 @@ export function ProfileScreen({ navigation }: CustomerScreenProps<'Profile'>) {
     .toUpperCase() ?? '?';
 
   const settings = [
+    { icon: '✦', label: 'My plan', onPress: () => navigation.navigate('Subscription'), danger: false },
+    { icon: '🪙', label: 'Credits', onPress: () => navigation.navigate('Credits'), danger: false },
     { icon: '🎨', label: 'Appearance', onPress: () => navigation.navigate('ThemePicker'), danger: false },
     { icon: '🚪', label: 'Sign out', onPress: () => void logout(), danger: true },
   ];

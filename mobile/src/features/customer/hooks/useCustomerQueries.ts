@@ -6,6 +6,7 @@ export const customerKeys = {
   categories: ['catalog', 'categories'] as const,
   designs: (slug: string) => ['catalog', 'designs', slug] as const,
   orders: ['orders', 'list'] as const,
+  detail: (id: string) => ['orders', 'detail', id] as const,
   progress: (id: string) => ['orders', 'progress', id] as const,
   snapshot: (id: string) => ['tracking', 'snapshot', id] as const,
 };
@@ -18,6 +19,12 @@ export const useDesigns = (slug: string) =>
 
 export const useMyOrders = () =>
   useQuery({ queryKey: customerKeys.orders, queryFn: customerApi.orders });
+
+export const useOrderDetail = (orderId: string) =>
+  useQuery({
+    queryKey: customerKeys.detail(orderId),
+    queryFn: () => customerApi.orderDetail(orderId),
+  });
 
 export const useOrderProgress = (orderId: string) =>
   useQuery({

@@ -11,7 +11,9 @@ import { apiClient } from '@/api/client';
 import { endpoints } from '@/api/endpoints';
 import { DatePickerInput } from '@/components/DatePickerInput';
 import { Input } from '@/components/Input';
+import { useCreditBalance } from '@/features/customer/hooks/useBilling';
 import { spacing, useTheme } from '@/theme';
+import { formatters } from '@/utils/formatters';
 
 import type { CustomerScreenProps } from '@/navigation/types';
 
@@ -84,7 +86,7 @@ const MAX_REF_IMAGES = 5;
 // ─── component ────────────────────────────────────────────────────────────────
 
 export function CreateOrderScreen({ route, navigation }: CustomerScreenProps<'CreateOrder'>) {
-  const { designId, categorySlug = 'custom' } = route.params ?? {};
+  const { designId, categorySlug = 'custom', designName, designImage, basePrice } = route.params ?? {};
   const { colors } = useTheme();
 
   const fields = MEASUREMENT_FIELDS[categorySlug] ?? MEASUREMENT_FIELDS.custom ?? [];
@@ -92,7 +94,12 @@ export function CreateOrderScreen({ route, navigation }: CustomerScreenProps<'Cr
   const [deliveryDate, setDeliveryDate] = useState('');
   const [notes, setNotes] = useState('');
   const [refImages, setRefImages] = useState<string[]>([]);
+  const [creditsToRedeem, setCreditsToRedeem] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  const { data: creditData } = useCreditBalance();
+  const creditBalance = creditData?.balance ?? 0;
 
   function setField(label: string, value: string) {
     setMeasurements((prev) => ({ ...prev, [toKey(label)]: value }));
@@ -152,13 +159,15 @@ export function CreateOrderScreen({ route, navigation }: CustomerScreenProps<'Cr
 
     setLoading(true);
     try {
+      const credits = Math.max(0, Math.min(parseInt(creditsToRedeem || '0', 10) || 0, Math.floor(creditBalance)));
       const { data } = await apiClient.post<{ id: string }>(endpoints.orders.create, {
         design_id: designId ?? null,
         category_slug: categorySlug,
         measurements: numericMeasurements,
         expected_delivery_date: deliveryDate,
         notes: notes.trim() || null,
-        quantity: 1,
+        quantity,
+        credits_to_redeem: credits,
       });
 
       // Upload reference images in the background (non-blocking)
@@ -208,26 +217,54 @@ export function CreateOrderScreen({ route, navigation }: CustomerScreenProps<'Cr
 
           <View style={{ paddingHorizontal: 16, gap: 16 }}>
 
-            {/* ── Design confirmation (if from Designs screen) ── */}
+            {/* ── Design hero (if from Designs screen) ── */}
             {designId && (
-              <View style={{
-                backgroundColor: colors.surface, borderWidth: 1.5,
-                borderColor: colors.border, borderRadius: 14,
-                overflow: 'hidden' as const, flexDirection: 'row' as const,
-              }}>
-                <LinearGradient
-                  colors={[colors.primary, colors.accent]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 0, y: 1 }}
-                  style={{ width: 3 }}
-                />
-                <View style={{ padding: 12 }}>
-                  <Text style={{ fontSize: 11, color: colors.textMuted, fontWeight: '600' as const, letterSpacing: 0.5 }}>
-                    DESIGN SELECTED
+              <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 18, overflow: 'hidden' as const }}>
+                <View style={{ height: 170, backgroundColor: colors.primary + '14', alignItems: 'center' as const, justifyContent: 'center' as const }}>
+                  {designImage ? (
+                    <Image source={{ uri: designImage }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                  ) : (
+                    <Text style={{ fontSize: 64 }}>🧵</Text>
+                  )}
+                </View>
+                <View style={{ padding: 14 }}>
+                  <Text style={{ fontSize: 11, color: colors.textMuted, fontWeight: '600' as const, letterSpacing: 0.5, textTransform: 'uppercase' as const }}>
+                    {categorySlug.replace(/-/g, ' ')}
                   </Text>
-                  <Text style={{ fontSize: 12, color: colors.primary, marginTop: 2, fontWeight: '600' as const }}>
-                    {categorySlug.replace(/-/g, ' ')} — tap Back to change
-                  </Text>
+                  <View style={{ flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'space-between' as const, marginTop: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: '800' as const, color: colors.text, flex: 1, marginRight: 10 }} numberOfLines={1}>
+                      {designName ?? 'Selected design'}
+                    </Text>
+                    {basePrice != null ? (
+                      <Text style={{ fontSize: 16, fontWeight: '800' as const, color: colors.primary }}>
+                        {formatters.inr(basePrice * quantity)}
+                      </Text>
+                    ) : null}
+                  </View>
+
+                  {/* Quantity stepper */}
+                  <View style={{ flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'space-between' as const, marginTop: 14 }}>
+                    <Text style={{ fontSize: 13, color: colors.textMuted, fontWeight: '600' as const }}>Quantity</Text>
+                    <View style={{ flexDirection: 'row' as const, alignItems: 'center' as const, gap: 16 }}>
+                      <Pressable
+                        onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+                        style={{ width: 32, height: 32, borderRadius: 16, borderWidth: 1.5, borderColor: colors.border, alignItems: 'center' as const, justifyContent: 'center' as const }}
+                      >
+                        <Text style={{ fontSize: 18, color: colors.text, marginTop: -2 }}>−</Text>
+                      </Pressable>
+                      <Text style={{ fontSize: 16, fontWeight: '700' as const, color: colors.text, minWidth: 18, textAlign: 'center' as const }}>{quantity}</Text>
+                      <Pressable onPress={() => setQuantity((q) => Math.min(10, q + 1))}>
+                        <LinearGradient
+                          colors={[colors.primary, colors.accent]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={{ width: 32, height: 32, borderRadius: 16, alignItems: 'center' as const, justifyContent: 'center' as const }}
+                        >
+                          <Text style={{ fontSize: 18, color: '#fff', marginTop: -2 }}>+</Text>
+                        </LinearGradient>
+                      </Pressable>
+                    </View>
+                  </View>
                 </View>
               </View>
             )}
@@ -272,6 +309,25 @@ export function CreateOrderScreen({ route, navigation }: CustomerScreenProps<'Cr
                 />
               </View>
             </View>
+
+            {/* ── Redeem credits ── */}
+            {creditBalance > 0 && (
+              <View style={{ backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.border, borderRadius: 16, padding: 14 }}>
+                <Text style={{ fontSize: 13, fontWeight: '700' as const, color: colors.text, marginBottom: 4 }}>
+                  🪙 Redeem credits
+                </Text>
+                <Text style={{ fontSize: 11, color: colors.textMuted, marginBottom: 10 }}>
+                  You have {formatters.inr(creditBalance)} in credits · 1 credit = ₹1 off
+                </Text>
+                <Input
+                  label="Credits to apply"
+                  value={creditsToRedeem}
+                  onChangeText={setCreditsToRedeem}
+                  keyboardType="number-pad"
+                  placeholder="0"
+                />
+              </View>
+            )}
 
             {/* ── Reference images ── */}
             <View style={{ backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.border, borderRadius: 16, padding: 14 }}>

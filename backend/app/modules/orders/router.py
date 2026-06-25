@@ -60,3 +60,14 @@ def cancel(
 ) -> dict[str, str]:
     # TODO: implement cancellation state machine
     return {"status": "cancelled", "id": str(order_id)}
+
+
+@router.post("/{order_id}/deliver", response_model=OrderPublic)
+def mark_delivered(
+    order_id: uuid.UUID,
+    user: Annotated[CurrentUser, Depends(require_roles("admin", "delivery"))],
+    db: Annotated[Session, Depends(get_db)],
+) -> OrderPublic:
+    """Mark an order delivered — awards order-completion credits to the customer."""
+    role = "admin" if user.has_role("admin") else "delivery"
+    return OrdersService(db).mark_delivered(order_id, actor_role=role)

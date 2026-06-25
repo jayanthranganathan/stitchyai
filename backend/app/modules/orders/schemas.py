@@ -26,13 +26,18 @@ class OrderCreate(BaseModel):
     # saved default address when this is empty.
     delivery_address: dict[str, Any] = Field(default_factory=dict)
     notes: str | None = None
+    # Credits to redeem as a discount (1 credit = ₹1). Capped at balance + total.
+    credits_to_redeem: int = Field(default=0, ge=0)
 
 
 class OrderItemPublic(BaseModel):
     id: str
     category_id: str
+    category_name: str | None
     design_id: str | None
+    design_name: str | None
     proposal_id: str | None
+    image_url: str | None  # cloth/design image: design image, else proposal reference
     quantity: int
     unit_price: float
     subtotal: float
@@ -44,8 +49,12 @@ class OrderPublic(BaseModel):
     placed_at: str | None
     expected_delivery_date: date | None
     total_amount: float
+    credits_redeemed: float
     currency: str
     progress_percent: int
+    notes: str | None
+    payment_status: str | None
+    payment_provider: str | None
     items: list[OrderItemPublic]
 
 

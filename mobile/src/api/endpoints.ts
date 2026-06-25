@@ -7,8 +7,18 @@ export const endpoints = {
   auth: {
     requestOtp: '/auth/otp/request',
     verifyOtp: '/auth/otp/verify',
+    firebase: '/auth/firebase',
     refresh: '/auth/refresh',
     logout: '/auth/logout',
+  },
+  subscriptions: {
+    plans: '/subscriptions/plans',
+    me: '/subscriptions/me',
+    change: '/subscriptions/change',
+  },
+  credits: {
+    balance: '/credits/balance',
+    history: '/credits/history',
   },
   users: {
     me: '/users/me',

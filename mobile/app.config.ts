@@ -36,6 +36,12 @@ const config: ExpoConfig = {
   extra: {
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8000/v1',
     razorpayKeyId: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID ?? '',
+    firebase: {
+      apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY ?? '',
+      authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? '',
+      projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? '',
+      appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID ?? '',
+    },
   },
   plugins: [
     'expo-secure-store',
