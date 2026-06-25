@@ -34,7 +34,7 @@ const config: ExpoConfig = {
     },
   },
   extra: {
-    apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8000/v1',
+    apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://thugil-api-production.up.railway.app/',
     razorpayKeyId: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID ?? '',
     firebase: {
       apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY ?? '',
@@ -42,6 +42,9 @@ const config: ExpoConfig = {
       projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? '',
       appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID ?? '',
     },
+    eas: {
+      projectId: "9cd99483-419e-4cd4-bdd9-46e4557f2790"
+    }
   },
   plugins: [
     'expo-secure-store',
