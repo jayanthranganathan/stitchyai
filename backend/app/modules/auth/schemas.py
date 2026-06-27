@@ -81,7 +81,7 @@ class TokenPair(BaseModel):
 
 class UserPublic(BaseModel):
     id: str
-    phone: str
+    phone: str | None = None
     email: str | None = None
     full_name: str | None = None
     roles: list[str]

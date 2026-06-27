@@ -106,7 +106,7 @@ CREATE TYPE creditkind AS ENUM (
 -- =============================================================================
 CREATE TABLE user_accounts (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-    phone       VARCHAR(20) NOT NULL UNIQUE,
+    phone       VARCHAR(20)          UNIQUE,
     email       VARCHAR(255)         UNIQUE,
     full_name   VARCHAR(255),
     is_active   BOOLEAN     NOT NULL DEFAULT TRUE,

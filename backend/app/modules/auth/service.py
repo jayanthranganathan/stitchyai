@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.exceptions import UnauthorizedError
 from app.core.security import create_access_token, create_refresh_token
+from app.models.user import UserAccount
 from app.modules.auth.otp_provider import OtpProvider, get_otp_provider
 from app.modules.auth.repository import AuthRepository
 from app.modules.auth.schemas import AuthResult, TokenPair, UserPublic
@@ -32,7 +33,21 @@ class AuthService:
         Used by both the OTP flow and the Firebase phone-auth flow — the phone
         is trusted by the time we reach here.
         """
-        user = self.repo.find_by_phone(phone) or self.repo.create(phone)
+        user = self.repo.find_by_phone(phone) or self.repo.create(phone=phone)
+        return self._issue(user)
+
+    def login_with_firebase(self, phone: str | None, email: str | None) -> AuthResult:
+        """Find-or-create a user from a verified Firebase identity (phone or email)."""
+        user = None
+        if phone:
+            user = self.repo.find_by_phone(phone)
+        if user is None and email:
+            user = self.repo.find_by_email(email)
+        if user is None:
+            user = self.repo.create(phone=phone, email=email)
+        return self._issue(user)
+
+    def _issue(self, user: UserAccount) -> AuthResult:
         roles = self._derive_roles(user)
         return AuthResult(
             user=UserPublic(

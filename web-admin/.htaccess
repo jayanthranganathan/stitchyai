@@ -1,0 +1,20 @@
+# Protect sensitive files from direct web access (Apache / IONOS).
+
+# Block the config (DB credentials + admin hashes)
+<Files "config.php">
+    Require all denied
+</Files>
+<Files "config.example.php">
+    Require all denied
+</Files>
+
+# Block the lib/ includes from being requested directly
+RedirectMatch 403 ^/.*/lib/.*\.php$
+
+# Default to login when hitting the folder root
+DirectoryIndex login.php index.php
+
+# Force HTTPS (recommended — admin panel handles credentials)
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

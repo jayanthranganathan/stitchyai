@@ -68,10 +68,12 @@ def _ensure_initialised() -> None:
         logger.info("[Firebase] Admin SDK initialised")
 
 
-def verify_id_token(id_token: str) -> str:
-    """Verify a Firebase ID token and return the verified E.164 phone number.
+def verify_identity(id_token: str) -> tuple[str | None, str | None]:
+    """Verify a Firebase ID token and return ``(phone, email)``.
 
-    Raises UnauthorizedError if the token is invalid or carries no phone number.
+    Phone tokens come from phone-auth; email tokens from email/password sign-in.
+    At least one of the two is always present. Raises UnauthorizedError if the
+    token is invalid or carries neither identifier.
     """
     _ensure_initialised()
     from firebase_admin import auth as fb_auth
@@ -83,6 +85,7 @@ def verify_id_token(id_token: str) -> str:
         raise UnauthorizedError("Invalid Firebase token") from exc
 
     phone = decoded.get("phone_number")
-    if not phone:
-        raise UnauthorizedError("Firebase token has no phone number")
-    return str(phone)
+    email = decoded.get("email")
+    if not phone and not email:
+        raise UnauthorizedError("Firebase token has no phone number or email")
+    return (str(phone) if phone else None, str(email).lower() if email else None)
