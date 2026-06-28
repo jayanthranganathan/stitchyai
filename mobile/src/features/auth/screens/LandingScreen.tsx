@@ -7,7 +7,7 @@ import { spacing, useTheme } from '@/theme';
 
 import type { AuthScreenProps } from '@/navigation/types';
 
-// hero.png is the full composited artwork (model + purple circle + saree/thread/
+// hero.jpg is the full composited artwork (model + purple circle + saree/thread/
 // fabric cards + swatches + fabric wave, all baked into one transparent-style PNG
 // on a light-lavender ground that matches colors.background). We render it edge to
 // edge as the page backdrop — NO card — and overlay the text + buttons on top.
@@ -36,7 +36,7 @@ export function LandingScreen({ navigation }: AuthScreenProps<'Landing'>) {
           the fabric collage sits along the bottom edge and the model rises into
           the upper area behind the heading. Blends into the background (no card). */}
       <Image
-        source={require('../../../../assets/hero.png')}
+        source={require('../../../../assets/hero.jpg')}
         style={{ position: 'absolute', top: HERO_TOP, left: 0, width: SCREEN_W, height: HERO_H }}
         resizeMode="cover"
       />
