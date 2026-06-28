@@ -45,8 +45,13 @@ export function PhoneLoginScreen({ navigation }: AuthScreenProps<'PhoneLogin'>) 
         await startPhoneVerification(phone);
         setLoading(false);
         navigation.navigate('OtpVerify', { phone, firebase: true });
-      } catch {
-        setError('Could not send OTP. Check the number and try again.');
+      } catch (err) {
+        // Surface the real Firebase error code (e.g. auth/app-not-authorized,
+        // auth/missing-client-identifier) — these are client-side, so they
+        // never reach the backend logs.
+        const code = (err as { code?: string })?.code;
+        const message = (err as { message?: string })?.message;
+        setError(code ? `OTP failed (${code})` : (message ?? 'Could not send OTP. Try again.'));
         setLoading(false);
       }
       return;

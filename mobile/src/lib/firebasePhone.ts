@@ -2,21 +2,28 @@
  * Firebase phone-auth via the native @react-native-firebase/auth SDK.
  *
  * Google sends the SMS — no Indian DLT/GST registration required. On Android
- * this uses Play Integrity (usually no visible reCAPTCHA); on iOS it uses APNs
- * silent push. Only works in a dev/standalone build (NOT Expo Go), since it
- * relies on the native Firebase module + google-services.json.
+ * this uses Play Integrity; on iOS it uses APNs. Only works in a dev/standalone
+ * build (NOT Expo Go), since it relies on the native Firebase module.
  *
- * The module is imported dynamically so this file is safe to import in Expo Go
- * (the native bridge is only touched when these functions actually run).
+ * IMPORTANT: the native module is loaded LAZILY (require() inside the helper),
+ * so merely importing this file never touches the native bridge. That lets the
+ * app boot in Expo Go (which has no native Firebase) and fall back to the dev
+ * OTP flow — Firebase only loads when these functions are actually called.
  */
 
-import auth, { type FirebaseAuthTypes } from '@react-native-firebase/auth';
+import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
+
+function authInstance(): FirebaseAuthTypes.Module {
+  // Lazy require — only resolves the native module at call time.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+  return (require('@react-native-firebase/auth').default as () => FirebaseAuthTypes.Module)();
+}
 
 let _confirmation: FirebaseAuthTypes.ConfirmationResult | null = null;
 
 /** Send the SMS OTP via Firebase. */
 export async function startPhoneVerification(phone: string): Promise<void> {
-  _confirmation = await auth().signInWithPhoneNumber(phone);
+  _confirmation = await authInstance().signInWithPhoneNumber(phone);
 }
 
 /** Confirm the entered code; returns a Firebase ID token for our backend. */

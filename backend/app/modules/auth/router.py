@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import get_db
-from app.modules.auth.firebase_provider import verify_id_token
+from app.modules.auth.firebase_provider import verify_identity
 from app.modules.auth.schemas import (
     AuthResult,
     FirebaseLogin,
@@ -46,8 +46,8 @@ def firebase_login(body: FirebaseLogin, db: Annotated[Session, Depends(get_db)])
     The app completes the phone OTP via Firebase (no DLT/GST), then posts the
     ID token here. We verify it and find-or-create the user by phone.
     """
-    phone = verify_id_token(body.id_token)
-    return AuthService(db).login_with_verified_phone(phone)
+    phone, email = verify_identity(body.id_token)
+    return AuthService(db).login_with_firebase(phone, email)
 
 
 @router.post("/refresh", response_model=TokenPair)
