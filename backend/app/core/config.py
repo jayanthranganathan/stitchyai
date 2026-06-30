@@ -27,8 +27,11 @@ class Settings(BaseSettings):
 
     # --- Security ---
     jwt_secret: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMTAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMzEiLCJyb2xlcyI6WyJhZG1pbiJdLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzc5ODQwNTc2LCJleHAiOjE4MTEzNzY1NzZ9.BwFaZH2od7i2ORLPznsUVFqIovw7txd39y_hnD7PfpQ"
-    jwt_access_minutes: int = 15
-    jwt_refresh_days: int = 30
+    jwt_access_minutes: int = 60
+    # Long-lived refresh so an active user stays signed in until they explicitly
+    # log out. The mobile client rotates this on every access-token refresh, so
+    # the window keeps sliding forward as long as the app is used.
+    jwt_refresh_days: int = 365
     jwt_algorithm: str = "HS256"
 
     # --- OTP (MSG91) ---
