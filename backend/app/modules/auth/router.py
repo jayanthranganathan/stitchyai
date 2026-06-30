@@ -51,9 +51,9 @@ def firebase_login(body: FirebaseLogin, db: Annotated[Session, Depends(get_db)])
 
 
 @router.post("/refresh", response_model=TokenPair)
-def refresh(_body: RefreshRequest) -> TokenPair:
-    # TODO: implement refresh-token rotation backed by Redis denylist
-    raise NotImplementedError
+def refresh(body: RefreshRequest, db: Annotated[Session, Depends(get_db)]) -> TokenPair:
+    """Exchange a valid refresh token for a fresh access+refresh pair."""
+    return AuthService(db).refresh(body.refresh)
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)

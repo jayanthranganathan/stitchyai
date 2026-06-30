@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+import jwt
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import UnauthorizedError
-from app.core.security import create_access_token, create_refresh_token
+from app.core.security import create_access_token, create_refresh_token, decode_token
 from app.models.user import UserAccount
 from app.modules.auth.otp_provider import OtpProvider, get_otp_provider
 from app.modules.auth.repository import AuthRepository
@@ -46,6 +47,28 @@ class AuthService:
         if user is None:
             user = self.repo.create(phone=phone, email=email)
         return self._issue(user)
+
+    def refresh(self, refresh_token: str) -> TokenPair:
+        """Validate a refresh JWT and mint a fresh access+refresh pair (rotation).
+
+        Lets the mobile app keep a session alive silently after the short-lived
+        access token expires — the user stays logged in until they sign out.
+        """
+        try:
+            payload = decode_token(refresh_token)
+        except jwt.PyJWTError as exc:
+            raise UnauthorizedError("Invalid or expired refresh token") from exc
+        if payload.get("type") != "refresh":
+            raise UnauthorizedError("Not a refresh token")
+        user_id = payload.get("sub")
+        user = self.repo.get(user_id) if user_id else None
+        if user is None or not user.is_active:
+            raise UnauthorizedError("Account no longer active")
+        roles = self._derive_roles(user)
+        return TokenPair(
+            access=create_access_token(subject=str(user.id), roles=roles),
+            refresh=create_refresh_token(subject=str(user.id)),
+        )
 
     def _issue(self, user: UserAccount) -> AuthResult:
         roles = self._derive_roles(user)

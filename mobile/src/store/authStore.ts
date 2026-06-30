@@ -1,6 +1,7 @@
+import axios from 'axios';
 import { create } from 'zustand';
 
-import { apiClient } from '@/api/client';
+import { apiClient, setAuthFailureHandler } from '@/api/client';
 import { endpoints } from '@/api/endpoints';
 import type { ProfileUpdate, Role, TokenPair, User } from '@/types';
 import { storage } from '@/utils/storage';
@@ -31,11 +32,19 @@ export const useAuthStore = create<AuthState>((set, _get) => ({
       return;
     }
     try {
+      // The client auto-refreshes on 401, so reaching here with a stored token
+      // normally succeeds even after the access token has expired.
       const { data } = await apiClient.get<User>(endpoints.users.me);
       const role = ((await storage.get('activeRole')) as Role | null) ?? data.roles[0] ?? null;
       set({ user: data, activeRole: role, status: 'authenticated' });
-    } catch {
-      await storage.clearAll();
+    } catch (err) {
+      const status = axios.isAxiosError(err) ? err.response?.status : undefined;
+      if (status === 401 || status === 403) {
+        // Auth genuinely failed (refresh already tried + failed) → sign out.
+        await storage.clearAll();
+      }
+      // For network/server blips we KEEP the tokens so the user isn't forced to
+      // re-login; the next launch will retry hydration.
       set({ status: 'unauthenticated' });
     }
   },
@@ -92,3 +101,9 @@ export const useAuthStore = create<AuthState>((set, _get) => ({
     set({ user: null, activeRole: null, status: 'unauthenticated' });
   },
 }));
+
+// When the API client's token refresh fails, force a sign-out through the store
+// so the UI reacts (navigates back to the auth flow).
+setAuthFailureHandler(() => {
+  void useAuthStore.getState().logout();
+});
