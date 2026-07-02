@@ -55,6 +55,13 @@ const config: ExpoConfig = {
       {
         // @react-native-firebase requires static frameworks on iOS
         ios: { useFrameworks: 'static' },
+        // Google Play requires apps to target API level 35 (Android 15).
+        // Expo SDK 51 defaults to 34, so override the Android SDK levels here.
+        android: {
+          compileSdkVersion: 35,
+          targetSdkVersion: 35,
+          buildToolsVersion: '35.0.0',
+        },
       },
     ],
     [
