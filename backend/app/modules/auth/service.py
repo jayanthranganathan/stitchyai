@@ -88,15 +88,18 @@ class AuthService:
 
     @staticmethod
     def _derive_roles(user: Any) -> list[str]:
+        # Order matters: the mobile app uses roles[0] as the default active role.
+        # List the most privileged role first so an admin lands on the admin UI
+        # (every account also has a customer_profile, so admin must precede it).
         roles = []
+        if user.admin_profile:
+            roles.append("admin")
         if user.customer_profile:
             roles.append("customer")
         if user.tailor_profile:
             roles.append("tailor")
         if user.delivery_profile:
             roles.append("delivery")
-        if user.admin_profile:
-            roles.append("admin")
         if not roles:
             roles.append("customer")  # default first-time role
         return roles
